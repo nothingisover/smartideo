@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.1
+Version: 1.2
 
 Author: Fens Liu
 
@@ -29,9 +29,35 @@ define('SMARTIDEO_PATH', dirname( __FILE__ ));
 $smartideo = new smartideo();
 
 class smartideo{
-    private $width = '480';
-    private $height = '400';
+    private $width = '100%';
+    private $height = '500';
+    private $mobile_width = '100%';
+    private $mobile_height = '250';
     public function __construct(){
+        if(is_admin()){
+            add_action('admin_menu', array($this, 'admin_menu'));
+        }
+        
+        $option = get_option('smartideo_option');
+        if(!empty($option)){
+            $option = json_decode($option, true);
+        }else{
+            $option = array();
+        }
+        extract($option);
+        if(!empty($width)){
+            $this->width = $width;
+        }
+        if(!empty($height)){
+            $this->height = $height;
+        }
+        if(!empty($mobile_width)){
+            $this->mobile_width = $mobile_width;
+        }
+        if(!empty($mobile_height)){
+            $this->mobile_height = $mobile_height;
+        }
+        
         wp_embed_register_handler( 'smartideo_tudou',
             '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)#i',
             array($this, 'smartideo_embed_handler_tudou') );
@@ -150,7 +176,80 @@ class smartideo{
     private function get_iframe($url){
         $iframe = sprintf(
             '<iframe src="%1$s" width="%2$s" height="%3$s" frameborder="0" allowfullscreen="true"></iframe>',
-            $url, $this->width, $this->height);
+            $url, $this->mobile_width, $this->mobile_height);
         return $iframe;
+    }
+    
+    public function admin_menu(){
+        add_plugins_page('Smartideo 设置', 'Smartideo 设置', 'manage_options', 'smartideo_settings', array($this, 'admin_settings'));
+    }
+    
+    public function admin_settings(){
+        if($_POST['smartideo_submit'] == '保存'){
+            $param = array('width', 'height', 'mobile_width', 'mobile_height');
+            $json = array();
+            foreach($_POST as $key => $val){
+                if(in_array($key, $param)){
+                    $json[$key] = $val;
+                }
+            }
+            $json = json_encode($json); 
+            update_option('smartideo_option', $json);
+        }
+        $option = get_option('smartideo_option');
+        if(!empty($option)){
+            $option = json_decode($option, true);
+        }
+        if(empty($option['width'])){
+            $option['width'] = '100%';
+        }
+        if(empty($option['height'])){
+            $option['height'] = '500';
+        }
+        if(empty($option['mobile_width'])){
+            $option['mobile_width'] = '100%';
+        }
+        if(empty($option['mobile_height'])){
+            $option['mobile_height'] = '250';
+        }
+        
+        echo '<h2>Smartideo 设置</h2>';
+        echo '<form action="" method="post">	
+            <table class="form-table">
+		<tr valign="top">
+                    <th scope="row">播放器宽度</th>
+                    <td>
+                        <label><input type="text" class="regular-text code" name="width" value="'.$option['width'].'"></label>
+                        <br />
+                        <p class="description">默认宽度为100%</p>
+                    </td>
+		</tr>
+		<tr valign="top">
+                    <th scope="row">播放器高度</th>
+                    <td>
+                        <label><input type="text" class="regular-text code" name="height" value="'.$option['height'].'"></label>
+                        <br />
+                        <p class="description">默认高度为500px</p>
+                    </td>
+		</tr>
+                <tr valign="top">
+                    <th scope="row">移动设备播放器宽度</th>
+                    <td>
+                        <label><input type="text" class="regular-text code" name="mobile_width" value="'.$option['mobile_width'].'"></label>
+                        <br />
+                        <p class="description">手机、平板等设备访问时，默认宽度为100%</p>
+                    </td>
+		</tr>
+		<tr valign="top">
+                    <th scope="row">移动设备播放器高度</th>
+                    <td>
+                        <label><input type="text" class="regular-text code" name="mobile_height" value="'.$option['mobile_height'].'"></label>
+                        <br />
+                        <p class="description">手机、平板等设备访问时，默认高度为250px</p>
+                    </td>
+		</tr>
+            </table>
+            <p class="submit"><input type="submit" name="smartideo_submit" id="submit" class="button-primary" value="保存"></p>
+        </form>';
     }
 }
