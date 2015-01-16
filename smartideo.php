@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.0');
+define('SMARTIDEO_VERSION', '1.2');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
