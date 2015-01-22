@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.2
+Version: 1.3
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.2');
+define('SMARTIDEO_VERSION', '1.3');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -29,6 +29,7 @@ define('SMARTIDEO_PATH', dirname( __FILE__ ));
 $smartideo = new smartideo();
 
 class smartideo{
+    private $edit = false;
     private $width = '100%';
     private $height = '500';
     private $mobile_width = '100%';
@@ -36,6 +37,7 @@ class smartideo{
     public function __construct(){
         if(is_admin()){
             add_action('admin_menu', array($this, 'admin_menu'));
+            $this->edit = true;
         }
         
         $option = get_option('smartideo_option');
@@ -58,8 +60,10 @@ class smartideo{
             $this->mobile_height = $mobile_height;
         }
         
+        add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
+        
         wp_embed_register_handler( 'smartideo_tudou',
-            '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)#i',
+            '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)/#i',
             array($this, 'smartideo_embed_handler_tudou') );
         
         wp_embed_register_handler( 'smartideo_56',
@@ -71,7 +75,7 @@ class smartideo{
             array($this, 'smartideo_embed_handler_youku') );
         
         wp_embed_register_handler( 'smartideo_qq',
-            '#https?://v\.qq\.com/(?:cover/g/[a-z0-9_\.]+\?vid=(?<video_id1>[a-z0-9_=\-]+)|(?:[a-z0-9/]+)/(?<video_id2>[a-z0-9_=\-]+))#i',
+            '#https?://v\.qq\.com/(?:[a-z0-9_\./]+\?vid=(?<video_id1>[a-z0-9_=\-]+)|(?:[a-z0-9/]+)/(?<video_id2>[a-z0-9_=\-]+))#i',
             array($this, 'smartideo_embed_handler_qq') );
         
         wp_embed_register_handler( 'smartideo_sohu',
@@ -93,6 +97,10 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_letv',
             '#https?://www\.letv\.com/ptv/vplay/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_letv') );
+        
+        wp_embed_register_handler( 'smartideo_hunantv',
+            '#https?://www\.hunantv\.com/(?:[a-z0-9/]+)/(?<video_id>\d+)\.html#i',
+            array($this, 'smartideo_embed_handler_hunantv') );
     }
     
     public function smartideo_embed_handler_tudou( $matches, $attr, $url, $rawattr ) {
@@ -152,32 +160,68 @@ class smartideo{
     }
     
     public function smartideo_embed_handler_yinyuetai( $matches, $attr, $url, $rawattr ){
-        $embed = $this->get_embed("http://player.yinyuetai.com/video/player/{$matches['video_id']}/v_0.swf");
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://player.yinyuetai.com/video/player/{$matches['video_id']}/v_0.swf");
+        }
 	return apply_filters( 'embed_yinyuetai', $embed, $matches, $attr, $url, $rawattr );
     }
     
     public function smartideo_embed_handler_ku6( $matches, $attr, $url, $rawattr ){
-        $embed = $this->get_embed("http://player.ku6.com/refer/{$matches['video_id']}/v.swf");
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://player.ku6.com/refer/{$matches['video_id']}/v.swf");
+        }
 	return apply_filters( 'embed_ku6', $embed, $matches, $attr, $url, $rawattr );
     }
     
     public function smartideo_embed_handler_letv($matches, $attr, $url, $rawattr){
-        $embed = $this->get_embed("http://i7.imgs.letv.com/player/swfPlayer.swf?id={$matches['video_id']}&autoplay=0");
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://i7.imgs.letv.com/player/swfPlayer.swf?id={$matches['video_id']}&autoplay=0");
+        }
 	return apply_filters( 'embed_letv', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_hunantv( $matches, $attr, $url, $rawattr ) {
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://i1.hunantv.com/ui/swf/share/player.swf?video_id={$matches['video_id']}");
+        }
+	return apply_filters( 'embed_hunantv', $embed, $matches, $attr, $url, $rawattr );
     }
     
     private function get_embed($url){
         $embed = sprintf(
-            '<embed src="%1$s" allowFullScreen="true" quality="high" width="%2$s" height="%3$s" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>',
+            '<div id="smartideo">
+                <embed src="%1$s" allowFullScreen="true" quality="high" width="%2$s" height="%3$s" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+            </div>',
             $url, $this->width, $this->height);
         return $embed;
     }
     
     private function get_iframe($url){
         $iframe = sprintf(
-            '<iframe src="%1$s" width="%2$s" height="%3$s" frameborder="0" allowfullscreen="true"></iframe>',
+            '<div id="smartideo">
+                <iframe src="%1$s" width="%2$s" height="%3$s" frameborder="0" allowfullscreen="true"></iframe>
+            </div>',
             $url, $this->mobile_width, $this->mobile_height);
         return $iframe;
+    }
+    
+    private function get_link($url){
+        $link = sprintf('<div id="smartideo" style="width: %2$spx; height: %3$spx; line-height: %3$spx;">
+            <a href="%1$s" target="_blank" title="该视频不支持您的浏览器，请点击这里播放~" class="link">播放</a>
+        </div>', $url, $this->mobile_width, $this->mobile_height);
+        return $link;
+    }
+    
+    public function smartideo_scripts(){
+        wp_enqueue_style('smartideo', SMARTIDEO_URL . '/static/smartideo.css', array(), SMARTIDEO_VERSION, 'screen');
     }
     
     public function admin_menu(){
