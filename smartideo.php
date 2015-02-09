@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.3.0
+Version: 1.3.3
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.3.0');
+define('SMARTIDEO_VERSION', '1.3.3');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -79,7 +79,7 @@ class smartideo{
             array($this, 'smartideo_embed_handler_qq') );
         
         wp_embed_register_handler( 'smartideo_sohu',
-            '#https?://my\.tv\.sohu\.com/us/(?:\d+)/(?<video_id>\d+)#i',
+            '#https?://my\.tv\.sohu\.com/(?:pl|us)/(?:\d+)/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_sohu') );
         
         wp_embed_register_handler( 'smartideo_wasu',
@@ -101,6 +101,15 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_hunantv',
             '#https?://www\.hunantv\.com/(?:[a-z0-9/]+)/(?<video_id>\d+)\.html#i',
             array($this, 'smartideo_embed_handler_hunantv') );
+        
+        wp_embed_register_handler( 'smartideo_music163',
+            '#https?://music\.163\.com/\#/song\?id=(?<video_id>\d+)#i',
+            array($this, 'smartideo_embed_handler_music163') );
+        
+        wp_embed_register_handler( 'smartideo_xiami',
+            '#https?://www\.xiami\.com/song/(?<video_id>\d+)#i',
+            array($this, 'smartideo_embed_handler_xiami') );
+        
     }
     
     public function smartideo_embed_handler_tudou( $matches, $attr, $url, $rawattr ) {
@@ -195,6 +204,19 @@ class smartideo{
 	return apply_filters( 'embed_hunantv', $embed, $matches, $attr, $url, $rawattr );
     }
     
+    public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
+        $embed = $this->get_iframe("http://music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=1&height=90", '100%', '110');
+	return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_xiami( $matches, $attr, $url, $rawattr ) {
+        $embed = 
+            '<div id="smartideo" style="background: transparent;">
+                <script src="http://www.xiami.com/widget/player-single?uid=0&sid='.$matches['video_id'].'&autoplay=1&mode=js" type="text/javascript"></script>
+            </div>';
+	return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
     private function get_embed($url){
         $embed = sprintf(
             '<div id="smartideo">
@@ -204,12 +226,14 @@ class smartideo{
         return $embed;
     }
     
-    private function get_iframe($url){
+    private function get_iframe($url = '', $width = '', $height = ''){
+        $width = empty($width) ? $this->mobile_width : $width;
+        $height = empty($height) ? $this->mobile_height : $height;
         $iframe = sprintf(
             '<div id="smartideo">
                 <iframe src="%1$s" width="%2$s" height="%3$s" frameborder="0" allowfullscreen="true"></iframe>
             </div>',
-            $url, $this->mobile_width, $this->mobile_height);
+            $url, $width, $height);
         return $iframe;
     }
     

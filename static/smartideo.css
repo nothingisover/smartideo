@@ -1,2 +1,3 @@
-#smartideo { z-index: 0; text-align: center; background: #CCC; }
+#smartideo { z-index: 0; text-align: center; background: #CCC; line-height: 0; text-indent: 0; }
+#smartideo embed, #smartideo iframe { padding: 0; margin: 0; }
 #smartideo .link { background: url(play.png) no-repeat center center; background-size: 15%; display: block; text-indent: -100000px; }
