@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.3.3
+Version: 1.3.4
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.3.3');
+define('SMARTIDEO_VERSION', '1.3.4');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -62,6 +62,7 @@ class smartideo{
         
         add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
         
+        // video
         wp_embed_register_handler( 'smartideo_tudou',
             '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)/#i',
             array($this, 'smartideo_embed_handler_tudou') );
@@ -102,6 +103,15 @@ class smartideo{
             '#https?://www\.hunantv\.com/(?:[a-z0-9/]+)/(?<video_id>\d+)\.html#i',
             array($this, 'smartideo_embed_handler_hunantv') );
         
+        wp_embed_register_handler( 'smartideo_acfun',
+            '#https?://www\.acfun\.tv/v/ac(?<video_id>\d+)#i',
+            array($this, 'smartideo_embed_handler_acfun') );
+        
+        wp_embed_register_handler( 'smartideo_bilibili',
+            '#https?://www\.bilibili\.com/video/av(?<video_id>\d+)#i',
+            array($this, 'smartideo_embed_handler_bilibili') );
+        
+        // music
         wp_embed_register_handler( 'smartideo_music163',
             '#https?://music\.163\.com/\#/song\?id=(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_music163') );
@@ -202,6 +212,24 @@ class smartideo{
             $embed = $this->get_embed("http://i1.hunantv.com/ui/swf/share/player.swf?video_id={$matches['video_id']}");
         }
 	return apply_filters( 'embed_hunantv', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_acfun( $matches, $attr, $url, $rawattr ) {
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://static.acfun.mm111.net/player/ACFlashPlayer.out.swf?type=page&url=http://www.acfun.tv/v/ac{$matches['video_id']}");
+        }
+	return apply_filters( 'embed_acfun', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
+        if(wp_is_mobile() && !$this->edit){
+            $embed = $this->get_link($url);
+        }else{
+            $embed = $this->get_embed("http://static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page=1");
+        }
+	return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
     
     public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
