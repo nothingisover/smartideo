@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.3.4
+Version: 1.3.6
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.3.4');
+define('SMARTIDEO_VERSION', '1.3.6');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -34,6 +34,7 @@ class smartideo{
     private $height = '500';
     private $mobile_width = '100%';
     private $mobile_height = '250';
+    private $strategy = 0;
     public function __construct(){
         if(is_admin()){
             add_action('admin_menu', array($this, 'admin_menu'));
@@ -59,8 +60,12 @@ class smartideo{
         if(!empty($mobile_height)){
             $this->mobile_height = $mobile_height;
         }
-        
-        add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
+        if(!empty($strategy)){
+            $this->strategy = $strategy;
+        }
+        if($this->strategy != 1){
+            add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
+        }
         
         // video
         wp_embed_register_handler( 'smartideo_tudou',
@@ -233,43 +238,55 @@ class smartideo{
     }
     
     public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("http://music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=1&height=90", '100%', '110');
+        $embed = $this->get_iframe("http://music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=0&height=90", '100%', '110');
 	return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
     }
     
     public function smartideo_embed_handler_xiami( $matches, $attr, $url, $rawattr ) {
         $embed = 
             '<div id="smartideo" style="background: transparent;">
-                <script src="http://www.xiami.com/widget/player-single?uid=0&sid='.$matches['video_id'].'&autoplay=1&mode=js" type="text/javascript"></script>
+                <script src="http://www.xiami.com/widget/player-single?uid=0&sid='.$matches['video_id'].'&autoplay=0&mode=js" type="text/javascript"></script>
             </div>';
 	return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
     }
     
     private function get_embed($url){
-        $embed = sprintf(
+        $html = '';
+        if($this->strategy == 1){
+            $html .= sprintf('<link rel="stylesheet" id="smartideo-cssdd" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+        }
+        $html .= sprintf(
             '<div id="smartideo">
                 <embed src="%1$s" allowFullScreen="true" quality="high" width="%2$s" height="%3$s" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
             </div>',
             $url, $this->width, $this->height);
-        return $embed;
+        return $html;
     }
     
     private function get_iframe($url = '', $width = '', $height = ''){
+        $html = '';
+        if($this->strategy == 1){
+            $html .= sprintf('<link rel="stylesheet" id="smartideo-cssdd" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+        }
         $width = empty($width) ? $this->mobile_width : $width;
         $height = empty($height) ? $this->mobile_height : $height;
-        $iframe = sprintf(
+        $html .= sprintf(
             '<div id="smartideo">
                 <iframe src="%1$s" width="%2$s" height="%3$s" frameborder="0" allowfullscreen="true"></iframe>
             </div>',
             $url, $width, $height);
-        return $iframe;
+        return $html;
     }
     
     private function get_link($url){
-        $link = sprintf('<div id="smartideo" style="width: %2$spx; height: %3$spx; line-height: %3$spx;">
+        $html = '';
+        if($this->strategy == 1){
+            $html .= sprintf('<link rel="stylesheet" id="smartideo-cssdd" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+        }
+        $html .= sprintf('<div id="smartideo" style="width: %2$spx; height: %3$spx; line-height: %3$spx;">
             <a href="%1$s" target="_blank" title="该视频不支持您的浏览器，请点击这里播放~" class="link">播放</a>
         </div>', $url, $this->mobile_width, $this->mobile_height);
-        return $link;
+        return $html;
     }
     
     public function smartideo_scripts(){
@@ -282,7 +299,7 @@ class smartideo{
     
     public function admin_settings(){
         if($_POST['smartideo_submit'] == '保存'){
-            $param = array('width', 'height', 'mobile_width', 'mobile_height');
+            $param = array('width', 'height', 'mobile_width', 'mobile_height', 'strategy');
             $json = array();
             foreach($_POST as $key => $val){
                 if(in_array($key, $param)){
@@ -342,6 +359,21 @@ class smartideo{
                         <label><input type="text" class="regular-text code" name="mobile_height" value="'.$option['mobile_height'].'"></label>
                         <br />
                         <p class="description">手机、平板等设备访问时，默认高度为250px</p>
+                    </td>
+		</tr>
+                <tr valign="top">
+                    <th scope="row">资源加载策略</th>
+                    <td>
+                        <label title="按需加载">
+                            <input type="radio" name="strategy" value="1" ' . ($option['strategy'] == 1 ? 'checked="checked"' : '') . '/>
+                            <span>按需加载</span>
+                        </label>
+                        <label title="全局加载">
+                            <input type="radio" name="strategy" value="0" ' . ($option['strategy'] != 1 ? 'checked="checked"' : '') . '/>
+                            <span>全局加载</span>
+                        </label>
+                        <br />
+                        <p class="description">默认全局加载</p>
                     </td>
 		</tr>
             </table>
