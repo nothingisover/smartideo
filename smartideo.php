@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视 等网站。
 
-Version: 1.3.6
+Version: 1.3.7
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-for-wordpress.html
 
 
 
-define('SMARTIDEO_VERSION', '1.3.6');
+define('SMARTIDEO_VERSION', '1.3.7');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -66,6 +66,10 @@ class smartideo{
         if($this->strategy != 1){
             add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
         }
+        
+        wp_embed_unregister_handler('youku');
+        wp_embed_unregister_handler('tudou');
+        wp_embed_unregister_handler('56com');
         
         // video
         wp_embed_register_handler( 'smartideo_tudou',
@@ -257,7 +261,7 @@ class smartideo{
         }
         $html .= sprintf(
             '<div id="smartideo">
-                <embed src="%1$s" allowFullScreen="true" quality="high" width="%2$s" height="%3$s" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+                <embed src="%1$s" allowFullScreen="true" quality="high" width="%2$s" height="%3$s" allowScriptAccess="always" type="application/x-shockwave-flash" wmode="transparent"></embed>
             </div>',
             $url, $this->width, $this->height);
         return $html;
