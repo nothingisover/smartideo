@@ -33,6 +33,7 @@ class smartideo{
     private $width = '100%';
     private $height = '500px';
     private $strategy = 0;
+    private $tips_status = 0;
     private $option = array();
     public function __construct(){
         if(is_admin()){
@@ -48,8 +49,11 @@ class smartideo{
         }
         $this->option = $option;
         extract($option);
-        if(!empty($strategy)){
+        if(!isset($strategy)){
             $this->strategy = $strategy;
+        }
+        if(!isset($tips_status)){
+            $this->tips_status = $tips_status;
         }
         if($this->strategy != 1){
             add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
@@ -274,7 +278,7 @@ class smartideo{
                 <div class="player"' . $style . '>
                     <iframe src="' . $url . '" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
                 </div>';
-        if($this->option['tips_status'] == 1 && !$this->edit){
+        if($this->tips_status == 1 && !$this->edit){
             if(!empty($source)){
                 $source = 'javascript:void(0);';
             }
@@ -300,7 +304,7 @@ class smartideo{
     }
     
     public function admin_settings(){
-        if($_POST['smartideo_submit'] == '保存'){
+        if(isset($_POST['smartideo_submit']) && $_POST['smartideo_submit'] == '保存'){
             $param = array('width', 'height', 'strategy', 'tips_status', 'tips_content');
             $json = array();
             foreach($_POST as $key => $val){
@@ -317,6 +321,12 @@ class smartideo{
         }
         if(empty($option['tips_content'])){
             $option['tips_content'] = '建议在WIFI环境下播放，土豪请随意~';
+        }
+        if(!isset($option['strategy'])){
+            $option['strategy'] = 0;
+        }
+        if(!isset($option['tips_status'])){
+            $option['tips_status'] = 0;
         }
         
         echo '<h2>Smartideo 设置</h2>';
