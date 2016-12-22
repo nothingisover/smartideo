@@ -55,8 +55,13 @@ http://www.xiami.com/song/389307
 
 == Changelog ==
 
+= 2.1.2 =
+
+* 新增 支持优酷HTTPS
+* 优化 设置功能（请关注微信公众号：ri-fu-yi-ri 获取高级功能）
+
 = 2.1.1 =
-* 支持 WordPress 4.7
+* 新增 支持WordPress 4.7
 * 修复 bilibili H5不能播放的问题（临时方案）
 
 = 2.1.0 =

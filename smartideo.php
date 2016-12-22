@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.1.1');
+define('SMARTIDEO_VERSION', '2.1.2');
 
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 
@@ -88,15 +88,15 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_wasu',
             '#https?://www\.wasu\.cn/play/show/id/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_wasu') );
-        
+
         wp_embed_register_handler( 'smartideo_youtube',
             '#https?://www\.youtube\.com/watch\?v=(?<video_id>\w+)#i',
             array($this, 'smartideo_embed_handler_youtube') );
-        
+
         wp_embed_register_handler( 'smartideo_acfun',
             '#https?://www\.acfun\.tv/v/ac(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_acfun') );
-        
+
         wp_embed_register_handler( 'smartideo_meipai',
             '#https?://(?:www\.)?meipai\.com/media/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_meipai') );
@@ -121,7 +121,7 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_bilibili',
             '#https?://www\.bilibili\.com/video/av(?:(?<video_id1>\d+)/index_(?<video_id2>\d+)|(?<video_id>\d+))#i',
             array($this, 'smartideo_embed_handler_bilibili') );
-        
+
         wp_embed_register_handler( 'smartideo_miaopai',
             '#https?://www\.miaopai\.com/show/(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_miaopai') );
@@ -150,7 +150,11 @@ class smartideo{
     }
 
     public function smartideo_embed_handler_youku( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("http://player.youku.com/embed/{$matches['video_id']}?client_id={$this->youku_client_id}", $url);
+        if(!wp_is_mobile() && $this->is_https){
+            $embed = $this->get_embed("https://players.youku.com/player.php/sid/{$matches['video_id']}/v.swf?client_id={$this->youku_client_id}", $url);
+        }else{
+            $embed = $this->get_iframe("http://player.youku.com/embed/{$matches['video_id']}?client_id={$this->youku_client_id}", $url);
+        }
         return apply_filters( 'embed_youku', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -179,7 +183,7 @@ class smartideo{
         $embed = $this->get_iframe("//www.youtube.com/embed/{$matches['video_id']}", $url);
         return apply_filters( 'embed_youtube', $embed, $matches, $attr, $url, $rawattr );
     }
-    
+
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
@@ -201,14 +205,14 @@ class smartideo{
         }
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
-    
+
     public function smartideo_embed_handler_meipai( $matches, $attr, $url, $rawattr ) {
         $meipai_url = "http://www.meipai.com/media/{$matches['video_id']}";
         $request = new WP_Http();
         $data = $request->request($meipai_url, array('timeout' => 1));
         $data = $data['body'];
         if (!empty($data)) {
-            preg_match('/<meta content="(.*)" property="og:video:url">/', $data, $match); 
+            preg_match('/<meta content="(.*)" property="og:video:url">/', $data, $match);
         }
         $embed = $this->get_iframe("{$match[1]}", $url);
         return apply_filters( 'embed_meipai', $embed, $matches, $attr, $url, $rawattr );
@@ -338,7 +342,7 @@ class smartideo{
 
     public function admin_settings(){
         if($_POST['smartideo_submit'] == '保存'){
-            $param = array('width', 'height', 'strategy', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
+            $param = array('smartideo_code', 'width', 'height', 'strategy', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
             $json = array();
             foreach($_POST as $key => $val){
                 if(in_array($key, $param)){
@@ -401,8 +405,9 @@ class smartideo{
                         <br />
                         <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
                     </td>
-                </tr>
-                <tr valign="top">
+                </tr>';
+        if(strtolower(md5($option['smartideo_code'])) == 'aef964524cd9a9e2359c4a2e36b59bf6'){
+            echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
                         <label><input type="text" class="regular-text code" name="youku_client_id" value="'.$option['youku_client_id'].'"></label>
@@ -424,12 +429,24 @@ class smartideo{
                         <br />
                         <p class="description">默认使用Flash播放器</p>
                     </td>
-                </tr>
-            </table>
+                </tr>';
+        }else{
+            echo '<tr valign="top">
+                    <th scope="row">高级功能激活码</th>
+                    <td>
+                        <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
+                        <br />
+                        <p class="description">填入激活码保存后可开启高级功能，激活码关注微信公众号“<a href="http://mmbiz.qpic.cn/mmbiz_png/SpcmRsm9QC8vspdhEnicgjKr9n4T4qnMeEiaHwGAX5ic6QrN7NGZacuIgGplAxFLwyFiaqEeHHPWVyKCQwbClCcK5A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～</p>
+                    </td>
+                </tr>';
+        }
+        echo '</table>
             <p class="submit"><input type="submit" name="smartideo_submit" id="submit" class="button-primary" value="保存"></p>
-        </form>';
+            </form>';
         echo '<h2>意见反馈</h2>
-            <p>你的意见是Smartido成长的原动力，<a href="http://www.fengziliu.com/smartideo-2.html" target="_blank">欢迎给我们留言</a>，或许你想要的功能下一个版本就会实现哦！</p>
+            <p>你的意见是Smartido成长的动力，欢迎给我们留言，或许你想要的功能下一个版本就会实现哦！</p>
+            <p>插件官方页面：<a href="http://www.fengziliu.com/smartideo-2.html" target="_blank">http://www.fengziliu.com/smartideo-2.html</a></p>
+            <p>微信公众号：<a href="http://mmbiz.qpic.cn/mmbiz_png/SpcmRsm9QC8vspdhEnicgjKr9n4T4qnMeEiaHwGAX5ic6QrN7NGZacuIgGplAxFLwyFiaqEeHHPWVyKCQwbClCcK5A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1" target="_blank">ri-fu-yi-ri</a></p>
         ';
     }
 
