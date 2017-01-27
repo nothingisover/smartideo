@@ -32,17 +32,16 @@ http://my.tv.sohu.com/pl/6888667/78050474.shtml
 http://www.wasu.cn/Play/show/id/5079941
 http://www.acfun.tv/v/ac1963444
 http://www.meipai.com/media/531841278
-
-== 不支持手机播放 ==
 http://www.bilibili.com/video/av2436095/
 
+不支持手机播放
 http://www.letv.com/ptv/vplay/20932037.html
 http://www.hunantv.com/v/2/103460/f/1088659.html
 http://www.miaopai.com/show/mlnIHcTzrRusUb4SZuFI0Q__.htm
 http://v.yinyuetai.com/video/2207109
 http://v.ku6.com/show/P0Ib_pTne6-FBSa1AbtKUQ...html
 
-== 音乐 ==
+音乐
 http://music.163.com/#/song?id=186513
 http://www.xiami.com/song/389307
 
@@ -55,10 +54,28 @@ http://www.xiami.com/song/389307
 
 == Changelog ==
 
+= 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
+
+= 2.1.5 =
+* 新增 支持AcFun新域名（www.acfun.cn）
+* 优化 对哔哩哔哩HTTPS的支持
+* 优化 HTTPS检测方法
+* 优化 Smartideo设置
+
+= 2.1.4 =
+
+* 新增 支持秒拍H5播放
+* 优化 对优酷HTTPS的支持
+* 优化 对哔哩哔哩HTTPS的支持
+
+= 2.1.3 =
+
+* 修复 Smartideo设置的BUG
+
 = 2.1.2 =
 
 * 新增 支持优酷HTTPS
-* 优化 设置功能（请关注微信公众号：ri-fu-yi-ri 获取高级功能）
+* 优化 Smartideo设置
 
 = 2.1.1 =
 * 新增 支持WordPress 4.7
