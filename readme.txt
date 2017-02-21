@@ -55,8 +55,14 @@ http://www.xiami.com/song/389307
 == Changelog ==
 
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
+= 小广告：开发者必备的Chrome插件 http://t.cn/RJe4SNI =
+
+= 2.1.6 =
+
+* 修复 秒拍SWF播放器不能加载的BUG
 
 = 2.1.5 =
+
 * 新增 支持AcFun新域名（www.acfun.cn）
 * 优化 对哔哩哔哩HTTPS的支持
 * 优化 HTTPS检测方法
