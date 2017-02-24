@@ -57,6 +57,10 @@ http://www.xiami.com/song/389307
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
 = 小广告：开发者必备的Chrome插件 http://t.cn/RJe4SNI =
 
+= 2.1.7 =
+
+* 优化 对秒拍HTTPS的支持
+
 = 2.1.6 =
 
 * 修复 秒拍SWF播放器不能加载的BUG

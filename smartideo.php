@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.1.6
+Version: 2.1.7
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.1.6');
+define('SMARTIDEO_VERSION', '2.1.7');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -211,9 +211,9 @@ class smartideo{
     
     public function smartideo_embed_handler_miaopai( $matches, $attr, $url, $rawattr ) {
         if(wp_is_mobile()){
-            $embed = $this->get_iframe("http://gslb.miaopai.com/stream/{$matches['video_id']}.mp4", $url);
+            $embed = $this->get_iframe("//gslb.miaopai.com/stream/{$matches['video_id']}.mp4", $url);
         }else{
-            $embed = $this->get_embed("http://wscdn.miaopai.com/splayer2.2.0.swf?scid={$matches['video_id']}&token=&autopause=true", $url);
+            $embed = $this->get_embed("//wscdn.miaopai.com/splayer2.2.0.swf?scid={$matches['video_id']}&token=&autopause=true", $url);
         }
         return apply_filters( 'embed_miaopai', $embed, $matches, $attr, $url, $rawattr );
     }
