@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.1.7
+Version: 2.1.8
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.1.7');
+define('SMARTIDEO_VERSION', '2.1.8');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -127,6 +127,10 @@ class smartideo{
             '#https?://music\.163\.com/\#/song\?id=(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_music163') );
 
+        wp_embed_register_handler( 'smartideo_musicqq',
+            '#https?://y\.qq\.com/n/yqq/song/(?<video_id>\w+)\.html#i',
+            array($this, 'smartideo_embed_handler_musicqq') );
+        
         wp_embed_register_handler( 'smartideo_xiami',
             '#https?://www\.xiami\.com/song/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_xiami') );
@@ -180,11 +184,11 @@ class smartideo{
             $embed = '';
             if ($this->option['bilibili_player']) {
                 try{
-                    $api = 'http://www.bilibilijj.com/Api/AvToCid/' . $matches['video_id'];
+                    $api = 'http://www.bilibili.com/video/av' . $matches['video_id'];
                     $request = new WP_Http();
-                    $data = $request->request($api, array('timeout' => 1));
-                    $data = json_decode($data['body'], true);
-                    $cid = (int)$data['list'][0]['CID'];
+                    $data = $request->request($api, array('timeout' => 3));
+                    preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
+                    $cid = (int)$match[1];
                     if ($cid > 0) {
                         $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}", $url);
                     }
@@ -248,6 +252,11 @@ class smartideo{
     public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
         $embed = $this->get_iframe("http://music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=0&height=90", '', '100%', '110px');
         return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_musicqq( $matches, $attr, $url, $rawattr ) {
+        $embed = $this->get_iframe("//cc.stream.qqmusic.qq.com/C100{$matches['video_id']}.m4a?fromtag=52", '', '100%', '110px');
+        return apply_filters( 'embed_musicqq', $embed, $matches, $attr, $url, $rawattr );
     }
 
     public function smartideo_embed_handler_xiami( $matches, $attr, $url, $rawattr ) {

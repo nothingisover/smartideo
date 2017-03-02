@@ -2,7 +2,7 @@
 Contributors: Fens Liu
 Tags: video, html5, flash, youku, tudou, QQ, 56, 视频, 播放器, 优酷, 土豆, 搜狐, 腾讯
 Requires at least: 3.5.0
-Tested up to: 4.7
+Tested up to: 4.7.2
 
 Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
@@ -56,6 +56,11 @@ http://www.xiami.com/song/389307
 
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
 = 小广告：开发者必备的Chrome插件 http://t.cn/RJe4SNI =
+
+= 2.1.8 =
+
+* 新增 支持QQ音乐
+* 优化 哔哩哔哩H5播放（beta）
 
 = 2.1.7 =
 
