@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.1.8
+Version: 2.1.9
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.1.8');
+define('SMARTIDEO_VERSION', '2.1.9');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -178,25 +178,21 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        if(!wp_is_mobile() && $this->is_https()){
-            $embed = $this->get_embed("//static-s.bilibili.com/miniloader.swf?aid={$matches['video_id']}&page={$page}", $url);
-        }else{
+        if(wp_is_mobile()){
             $embed = '';
-            if ($this->option['bilibili_player']) {
-                try{
-                    $api = 'http://www.bilibili.com/video/av' . $matches['video_id'];
-                    $request = new WP_Http();
-                    $data = $request->request($api, array('timeout' => 3));
-                    preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
-                    $cid = (int)$match[1];
-                    if ($cid > 0) {
-                        $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}", $url);
-                    }
-                }catch(Exception $e){}
-            }
-            if(empty($embed)){
-                $embed = $this->get_embed("http://static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page={$page}", $url);
-            }
+            try{
+                $api = 'http://www.bilibili.com/video/av' . $matches['video_id'];
+                $request = new WP_Http();
+                $data = $request->request($api, array('timeout' => 3));
+                preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
+                $cid = (int)$match[1];
+                if ($cid > 0) {
+                    $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}", $url);
+                }
+            }catch(Exception $e){}
+        }
+        if(empty($embed)){
+            $embed = $this->get_embed("//static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page={$page}", $url);
         }
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
@@ -234,7 +230,7 @@ class smartideo{
     }
 
     public function smartideo_embed_handler_letv($matches, $attr, $url, $rawattr){
-        $embed = $this->get_embed("http://i7.imgs.letv.com/player/swfPlayer.swf?id={$matches['video_id']}&autoplay=0", $url);
+        $embed = $this->get_embed("http://img1.c0.letv.com/ptv/player/swfPlayer.swf?id={$matches['video_id']}&autoplay=0", $url);
         return apply_filters( 'embed_letv', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -422,21 +418,6 @@ class smartideo{
                         <label><input type="text" class="regular-text code" name="youku_client_id" value="'.$option['youku_client_id'].'"></label>
                         <br />
                         <p class="description">供优酷开发者使用，没有client_id请留空</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">哔哩哔哩播放器</th>
-                    <td>
-                        <label title="Flash版">
-                            <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>Flash版，只支持PC播放</span>
-                        </label>
-                        <label title="H5版">
-                            <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>H5版（beta，请慎用），支持PC和手机播放</span>
-                        </label>
-                        <br />
-                        <p class="description">默认使用Flash播放器</p>
                     </td>
                 </tr>';
         }else{
