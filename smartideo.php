@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.2.0
+Version: 2.2.1
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.2.0');
+define('SMARTIDEO_VERSION', '2.2.1');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -187,7 +187,10 @@ class smartideo{
             try{
                 $api = 'https://www.bilibili.com/video/av' . $matches['video_id'];
                 $request = new WP_Http();
-                $data = $request->request($api, array('timeout' => 3));
+                $data = (array)$request->request($api, array('timeout' => 3));
+                if(!isset($data['body'])){
+                    $data['data'] = '';
+                }
                 preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
                 $cid = (int)$match[1];
                 if ($cid > 0) {
@@ -227,7 +230,10 @@ class smartideo{
         try{
             $api = 'http://www.iqiyi.com/v_' . $matches['video_id'] . '.html';
             $request = new WP_Http();
-            $data = $request->request($api, array('timeout' => 3));
+            $data = (array)$request->request($api, array('timeout' => 3));
+            if(!isset($data['body'])){
+                $data['data'] = '';
+            }
             preg_match('/data-player-videoid="(\w+)"/i', (string)$data['body'], $match);
             $vid = $match[1];
             preg_match('/data-player-tvid="(\d+)"/i', (string)$data['body'], $match);
