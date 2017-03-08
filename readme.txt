@@ -57,6 +57,12 @@ http://www.xiami.com/song/389307
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
 = 小广告：开发者必备的Chrome插件 http://t.cn/RJe4SNI =
 
+= 2.2.0 =
+
+* 新增 支持爱奇艺（beta）
+* 优化 哔哩哔哩播放器选择（自动选择／全局H5）
+* 优化 Smartideo设置
+
 = 2.1.9 =
 
 * 优化 对哔哩哔哩HTTPS的支持

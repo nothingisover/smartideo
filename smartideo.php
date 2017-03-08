@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.1.9
+Version: 2.2.0
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.1.9');
+define('SMARTIDEO_VERSION', '2.2.0');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -104,6 +104,10 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_miaopai',
             '#https?://www\.miaopai\.com/show/(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_miaopai') );
+        
+        wp_embed_register_handler( 'smartideo_iqiyi',
+            '#https?://www\.iqiyi\.com/v_(?<video_id>[a-z0-9_~\-]+)#i',
+            array($this, 'smartideo_embed_handler_iqiyi') );
 
         // Not supported HTML5
         wp_embed_register_handler( 'smartideo_yinyuetai',
@@ -178,10 +182,10 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        if(wp_is_mobile()){
+        if(wp_is_mobile() || $this->option['bilibili_player']){
             $embed = '';
             try{
-                $api = 'http://www.bilibili.com/video/av' . $matches['video_id'];
+                $api = 'https://www.bilibili.com/video/av' . $matches['video_id'];
                 $request = new WP_Http();
                 $data = $request->request($api, array('timeout' => 3));
                 preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
@@ -216,6 +220,26 @@ class smartideo{
             $embed = $this->get_embed("//wscdn.miaopai.com/splayer2.2.0.swf?scid={$matches['video_id']}&token=&autopause=true", $url);
         }
         return apply_filters( 'embed_miaopai', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
+    public function smartideo_embed_handler_iqiyi( $matches, $attr, $url, $rawattr ) {
+        $embed = '';
+        try{
+            $api = 'http://www.iqiyi.com/v_' . $matches['video_id'] . '.html';
+            $request = new WP_Http();
+            $data = $request->request($api, array('timeout' => 3));
+            preg_match('/data-player-videoid="(\w+)"/i', (string)$data['body'], $match);
+            $vid = $match[1];
+            preg_match('/data-player-tvid="(\d+)"/i', (string)$data['body'], $match);
+            $tvid = $match[1];
+            if ($tvid > 0 && !empty($vid)) {
+                $embed = $this->get_iframe("//open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid={$vid}&tvId={$tvid}&height=100%&width=100%&autoplay=0", $url);
+            }
+        }catch(Exception $e){}
+        if(empty($embed)){
+            $embed = '解析失败，请刷新页面重试';
+        }
+        return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
 
     # video widthout h5
@@ -411,13 +435,28 @@ class smartideo{
                         <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
                     </td>
                 </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('aef964524cd9a9e2359c4a2e36b59bf6', '93144d072ad90bbd5896c0588b6b9267', 'b97d7058235b190f7594ad96374759b8', 'd885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f'))){
+        if(in_array(strtolower(md5($option['smartideo_code'])), array('93144d072ad90bbd5896c0588b6b9267', 'b97d7058235b190f7594ad96374759b8', 'd885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f'))){
             echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
                         <label><input type="text" class="regular-text code" name="youku_client_id" value="'.$option['youku_client_id'].'"></label>
                         <br />
                         <p class="description">供优酷开发者使用，没有client_id请留空</p>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">哔哩哔哩播放器</th>
+                    <td>
+                        <label title="Flash版">
+                            <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
+                            <span>自动选择，PC使用Flash播放器，手机使用H5播放器</span>
+                        </label>
+                        <label title="H5版">
+                            <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
+                            <span>全平台使用H5播放器（beta）</span>
+                        </label>
+                        <br />
+                        <p class="description">默认使用自动模式</p>
                     </td>
                 </tr>';
         }else{
@@ -427,7 +466,8 @@ class smartideo{
                         <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
                         <br />
                         <p class="description">升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
-                            激活码关注微信公众号“<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～</p>
+                            激活码关注微信公众号“<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
+                            如果激活码失效，请按照上述方法重新获取。</p>
                     </td>
                 </tr>';
         }
