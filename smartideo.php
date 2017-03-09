@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.2.1
+Version: 2.2.2
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.2.1');
+define('SMARTIDEO_VERSION', '2.2.2');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -467,15 +467,21 @@ class smartideo{
                 </tr>';
         }else{
             echo '<tr valign="top">
-                    <th scope="row">高级功能激活码</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
-                        <br />
-                        <p class="description">升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
-                            激活码关注微信公众号“<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
-                            如果激活码失效，请按照上述方法重新获取。</p>
-                    </td>
-                </tr>';
+                <th scope="row">彩蛋功能激活码</th>
+                <td>
+                    <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
+                    <br />
+                    <p class="description">
+                        关于彩蛋功能：<br />
+                        1.它是免费的<br />
+                        2.它是作者对新的想法的一些尝试，所以这些功能并不影响这个插件本身的使用（当然了Bug除外）<br />
+                        3.为了不影响普通用户的使用，它默认是隐藏的，需要通过激活码开启<br />
+                        使用方法：<br />
+                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启彩蛋功能。<br />
+                        2.激活码关注微信公众号“<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
+                        注意：如果激活码失效，请按照上述方法重新获取。</p>
+                </td>
+            </tr>';
         }
         echo '</table>
             <p class="submit"><input type="submit" name="smartideo_submit" id="submit" class="button-primary" value="保存"></p>
