@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.2.2
+Version: 2.2.4
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.2.2');
+define('SMARTIDEO_VERSION', '2.2.4');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -165,7 +165,7 @@ class smartideo{
     }
 
     public function smartideo_embed_handler_sohu( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("http://tv.sohu.com/upload/static/share/share_play.html#{$matches['video_id']}_0_0_9001_0", $url);
+        $embed = $this->get_iframe("//tv.sohu.com/upload/static/share/share_play.html#{$matches['video_id']}_0_0_9001_0", $url);
         return apply_filters( 'embed_sohu', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -185,7 +185,7 @@ class smartideo{
         if(wp_is_mobile() || $this->option['bilibili_player']){
             $embed = '';
             try{
-                $api = 'https://www.bilibili.com/video/av' . $matches['video_id'];
+                $api = ($this->is_https() ? 'https' : 'http') . '://www.bilibili.com/video/av' . $matches['video_id'] . ($page > 1 ? "/index_{$page}.html" : '');
                 $request = new WP_Http();
                 $data = (array)$request->request($api, array('timeout' => 3));
                 if(!isset($data['body'])){
@@ -276,7 +276,7 @@ class smartideo{
 
     # music
     public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("http://music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=0&height=90", '', '100%', '110px');
+        $embed = $this->get_iframe("//music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=0&height=90", '', '100%', '110px');
         return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
     }
     
@@ -290,7 +290,7 @@ class smartideo{
             '<div id="smartideo" style="background: transparent;">
                 <script src="http://www.xiami.com/widget/player-single?uid=0&sid='.$matches['video_id'].'&autoplay=0&mode=js" type="text/javascript"></script>
             </div>';
-        return apply_filters( 'embed_music163', $embed, $matches, $attr, $url, $rawattr );
+        return apply_filters( 'embed_xiami', $embed, $matches, $attr, $url, $rawattr );
     }
 
     private function get_embed($url = '', $source = '', $width = '', $height = ''){
@@ -333,7 +333,8 @@ class smartideo{
     private function get_iframe($url = '', $source = '', $width = '', $height = ''){
         $style = $html = '';
         if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" id="smartideo-cssdd" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
         }
         if($this->edit){
             $width = $this->width;
@@ -381,7 +382,7 @@ class smartideo{
             $option = json_decode(get_option('smartideo_option'), true);
             foreach($_POST as $key => $val){
                 if(in_array($key, $param)){
-                    $option[$key] = $val;
+                    $option[$key] = sanitize_text_field($val);
                 }
             }
             $json = json_encode($option);
@@ -407,7 +408,7 @@ class smartideo{
                             <span>全局加载</span>
                         </label>
                         <br />
-                        <p class="description">默认全局加载</p>
+                        <p class="description">默认全局加载（推荐）</p>
                     </td>
                 </tr>
                 <tr valign="top">
@@ -467,18 +468,18 @@ class smartideo{
                 </tr>';
         }else{
             echo '<tr valign="top">
-                <th scope="row">彩蛋功能激活码</th>
+                <th scope="row">实验室功能激活码</th>
                 <td>
                     <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
                     <br />
                     <p class="description">
-                        关于彩蛋功能：<br />
+                        关于实验室功能：<br />
                         1.它是免费的<br />
                         2.它是作者对新的想法的一些尝试，所以这些功能并不影响这个插件本身的使用（当然了Bug除外）<br />
                         3.为了不影响普通用户的使用，它默认是隐藏的，需要通过激活码开启<br />
                         使用方法：<br />
-                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启彩蛋功能。<br />
-                        2.激活码关注微信公众号“<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
+                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启实验室功能。<br />
+                        2.激活码关注微信公众号“<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
                         注意：如果激活码失效，请按照上述方法重新获取。</p>
                 </td>
             </tr>';
@@ -489,7 +490,7 @@ class smartideo{
         echo '<h2>意见反馈</h2>
             <p>你的意见是Smartido成长的动力，欢迎给我们留言，或许你想要的功能下一个版本就会实现哦！</p>
             <p>插件官方页面：<a href="http://www.fengziliu.com/smartideo-2.html" target="_blank">http://www.fengziliu.com/smartideo-2.html</a></p>
-            <p>微信公众号：<a href="http://www.rifuyiri.net/wp-content/uploads/2014/08/972e6fb0794d359.jpg" target="_blank">ri-fu-yi-ri</a></p>
+            <p>微信公众号：<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a></p>
         ';
     }
 

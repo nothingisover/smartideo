@@ -2,9 +2,9 @@
 Contributors: Fens Liu
 Tags: video, html5, flash, youku, tudou, QQ, 56, 视频, 播放器, 优酷, 土豆, 搜狐, 腾讯
 Requires at least: 3.5.0
-Tested up to: 4.7.2
+Tested up to: 4.7.3
 
-Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
+Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 
 
 == Description ==
 
@@ -20,32 +20,6 @@ http://www.rifuyiri.net/tag/%e7%be%8e%e5%a5%b3/ （视频）
 http://www.rifuyiri.net/music/m-1/ （音乐）
 PS: 手机访问可以查看在移动设备上的效果
 
-= 支持的URL示例 =
-http://v.youku.com/v_show/id_XMTYzNTgxNTMy.html
-http://www.tudou.com/programs/view/YBdHhxJqrLY/
-http://www.56.com/u35/v_MTEwMjM5NDcy.html
-http://v.qq.com/page/o/9/f/o0142tt1m9f.html
-http://v.qq.com/cover/t/tyeqdw6rof7t5ow/p0015kjlai9.html
-http://v.qq.com/cover/k/kl2zy755pnehxi3.html?vid=i0015mm1oo2
-http://my.tv.sohu.com/us/94469256/77228432.shtml
-http://my.tv.sohu.com/pl/6888667/78050474.shtml
-http://www.wasu.cn/Play/show/id/5079941
-http://www.acfun.tv/v/ac1963444
-http://www.meipai.com/media/531841278
-http://www.bilibili.com/video/av2436095/
-
-不支持手机播放
-http://www.letv.com/ptv/vplay/20932037.html
-http://www.hunantv.com/v/2/103460/f/1088659.html
-http://www.miaopai.com/show/mlnIHcTzrRusUb4SZuFI0Q__.htm
-http://v.yinyuetai.com/video/2207109
-http://v.ku6.com/show/P0Ib_pTne6-FBSa1AbtKUQ...html
-
-音乐
-http://music.163.com/#/song?id=186513
-http://www.xiami.com/song/389307
-
-
 == Installation ==
 
 1. 你可以在后台插件管理页面中直接搜索 `Smartideo` 并安装
@@ -55,7 +29,20 @@ http://www.xiami.com/song/389307
 == Changelog ==
 
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
-= 小广告：开发者必备的Chrome插件 http://t.cn/RJe4SNI =
+= 小广告：开发者必备的Chrome插件 =
+
+http://t.cn/RJe4SNI
+
+= 2.2.4 =
+
+* 优化 哔哩哔哩H5播放支持分P
+* 优化 搜狐视频支持HTTPS
+* 优化 网易云音乐支持HTTPS
+
+= 2.2.3 =
+
+* 优化 资源加载方式（推荐使用全局加载）
+* 优化 哔哩哔哩CID获取逻辑
 
 = 2.2.0 =
 
