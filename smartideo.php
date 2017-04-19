@@ -8,7 +8,7 @@ Plugin URI: http://www.fengziliu.com/
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.2.4
+Version: 2.2.5
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: http://www.fengziliu.com/smartideo-2.html
 
 
 
-define('SMARTIDEO_VERSION', '2.2.4');
+define('SMARTIDEO_VERSION', '2.2.5');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -108,7 +108,7 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_iqiyi',
             '#https?://www\.iqiyi\.com/v_(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_iqiyi') );
-
+        
         // Not supported HTML5
         wp_embed_register_handler( 'smartideo_yinyuetai',
             '#https?://v\.yinyuetai\.com/video/(?<video_id>\d+)#i',
@@ -245,7 +245,7 @@ class smartideo{
         if(empty($embed)){
             $embed = '解析失败，请刷新页面重试';
         }
-        return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
+        return apply_filters( 'embed_iqiyi', $embed, $matches, $attr, $url, $rawattr );
     }
 
     # video widthout h5
@@ -442,7 +442,7 @@ class smartideo{
                         <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
                     </td>
                 </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('93144d072ad90bbd5896c0588b6b9267', 'b97d7058235b190f7594ad96374759b8', 'd885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f'))){
+        if(in_array(strtolower(md5($option['smartideo_code'])), array('b97d7058235b190f7594ad96374759b8', 'd885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f'))){
             echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
@@ -468,17 +468,13 @@ class smartideo{
                 </tr>';
         }else{
             echo '<tr valign="top">
-                <th scope="row">实验室功能激活码</th>
+                <th scope="row">高级功能激活码</th>
                 <td>
                     <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
                     <br />
                     <p class="description">
-                        关于实验室功能：<br />
-                        1.它是免费的<br />
-                        2.它是作者对新的想法的一些尝试，所以这些功能并不影响这个插件本身的使用（当然了Bug除外）<br />
-                        3.为了不影响普通用户的使用，它默认是隐藏的，需要通过激活码开启<br />
                         使用方法：<br />
-                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启实验室功能。<br />
+                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
                         2.激活码关注微信公众号“<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
                         注意：如果激活码失效，请按照上述方法重新获取。</p>
                 </td>
