@@ -143,7 +143,8 @@ class smartideo{
 
     # video
     public function smartideo_embed_handler_tudou( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("http://www.tudou.com/programs/view/html5embed.action?type=0&code={$matches['video_id']}", $url);
+//        $embed = $this->get_iframe("http://www.tudou.com/programs/view/html5embed.action?type=0&code={$matches['video_id']}", $url);
+        $embed = $this->get_link($url);
         return apply_filters( 'embed_tudou', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -160,7 +161,7 @@ class smartideo{
 
     public function smartideo_embed_handler_qq( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
-        $embed = $this->get_iframe("//v.qq.com/iframe/player.html?vid={$matches['video_id']}&tiny=0&auto=0", $url);
+        $embed = $this->get_iframe("//v.qq.com/iframe/player.html?vid={$matches['video_id']}&tiny=1&auto=0", $url);
         return apply_filters( 'embed_qq', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -287,7 +288,7 @@ class smartideo{
 
     public function smartideo_embed_handler_xiami( $matches, $attr, $url, $rawattr ) {
         $embed =
-            '<div id="smartideo" style="background: transparent;">
+            '<div class="smartideo" style="background: transparent;">
                 <script src="http://www.xiami.com/widget/player-single?uid=0&sid='.$matches['video_id'].'&autoplay=0&mode=js" type="text/javascript"></script>
             </div>';
         return apply_filters( 'embed_xiami', $embed, $matches, $attr, $url, $rawattr );
@@ -313,7 +314,7 @@ class smartideo{
             $style = ' style="' . $style . '"';
         }
         $html .=
-            '<div id="smartideo">
+            '<div class="smartideo">
                 <div class="player"' . $style . '>
                     <embed src="' . $url . '" allowFullScreen="true" quality="high" width="100%" height="100%" allowScriptAccess="always" type="application/x-shockwave-flash" wmode="transparent"></embed>
                 </div>';
@@ -350,7 +351,7 @@ class smartideo{
             $style = ' style="' . $style . '"';
         }
         $html .=
-            '<div id="smartideo">
+            '<div class="smartideo">
                 <div class="player"' . $style . '>
                     <iframe src="' . $url . '" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
                 </div>';
@@ -364,6 +365,34 @@ class smartideo{
                 </div>';
         }
         $html .= '</div>';
+        return $html;
+    }
+    
+    private function get_link($url){
+        $style = $html = '';
+        if($this->strategy == 1){
+            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
+            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
+        }
+        if($this->edit){
+            $width = $this->width;
+            $height = $this->height;
+        }
+        if(!empty($width)){
+            $style .= "width: {$width};";
+        }
+        if(!empty($height)){
+            $style .= "height: {$height};";
+        }
+        if(!empty($style)){
+            $style = ' style="' . $style . '"';
+        }
+        $html .=  
+            '<div class="smartideo">
+                <div class="player"' . $style . '>
+                    <a href="' . $url . '" target="_blank" class="smartideo-play-link"><div class="smartideo-play-button"></div></a>
+                </div>
+            </div>';
         return $html;
     }
 
