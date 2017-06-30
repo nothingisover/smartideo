@@ -142,12 +142,6 @@ class smartideo{
     }
 
     # video
-    public function smartideo_embed_handler_tudou( $matches, $attr, $url, $rawattr ) {
-//        $embed = $this->get_iframe("http://www.tudou.com/programs/view/html5embed.action?type=0&code={$matches['video_id']}", $url);
-        $embed = $this->get_link($url);
-        return apply_filters( 'embed_tudou', $embed, $matches, $attr, $url, $rawattr );
-    }
-
     public function smartideo_embed_handler_56( $matches, $attr, $url, $rawattr ) {
 	$matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
         $embed = $this->get_iframe("http://www.56.com/iframe/{$matches['video_id']}", $url);
@@ -252,29 +246,49 @@ class smartideo{
     # video widthout h5
     public function smartideo_embed_handler_yinyuetai( $matches, $attr, $url, $rawattr ){
         $embed = $this->get_embed("http://player.yinyuetai.com/video/player/{$matches['video_id']}/v_0.swf", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
         return apply_filters( 'embed_yinyuetai', $embed, $matches, $attr, $url, $rawattr );
     }
 
     public function smartideo_embed_handler_ku6( $matches, $attr, $url, $rawattr ){
         $embed = $this->get_embed("http://player.ku6.com/refer/{$matches['video_id']}/v.swf", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
         return apply_filters( 'embed_ku6', $embed, $matches, $attr, $url, $rawattr );
     }
 
     public function smartideo_embed_handler_letv($matches, $attr, $url, $rawattr){
         $embed = $this->get_embed("http://img1.c0.letv.com/ptv/player/swfPlayer.swf?id={$matches['video_id']}&autoplay=0", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
         return apply_filters( 'embed_letv', $embed, $matches, $attr, $url, $rawattr );
     }
 
     public function smartideo_embed_handler_hunantv( $matches, $attr, $url, $rawattr ) {
         $embed = $this->get_embed("//i1.hunantv.com/ui/swf/share/player.swf?video_id={$matches['video_id']}&autoplay=0", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
         return apply_filters( 'embed_hunantv', $embed, $matches, $attr, $url, $rawattr );
     }
     
     public function smartideo_embed_handler_acfun( $matches, $attr, $url, $rawattr ) {
         $embed = $this->get_embed("http://cdn.aixifan.com/player/ACFlashPlayer.out.swf?type=page&url=http://www.acfun.cn/v/ac{$matches['video_id']}", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
         return apply_filters( 'embed_acfun', $embed, $matches, $attr, $url, $rawattr );
     }
 
+    public function smartideo_embed_handler_tudou( $matches, $attr, $url, $rawattr ) {
+        $embed = $this->get_link($url);
+        return apply_filters( 'embed_tudou', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
     # music
     public function smartideo_embed_handler_music163( $matches, $attr, $url, $rawattr ) {
         $embed = $this->get_iframe("//music.163.com/outchain/player?type=2&id={$matches['video_id']}&auto=0&height=90", '', '100%', '110px');
