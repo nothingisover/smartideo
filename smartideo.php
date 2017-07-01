@@ -6,7 +6,7 @@ Plugin Name: Smartideo
 
 Plugin URI: http://www.fengziliu.com/
 
-Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
+Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
 Version: 3.0.0
 
@@ -200,14 +200,7 @@ class smartideo{
     }
 
     public function smartideo_embed_handler_meipai( $matches, $attr, $url, $rawattr ) {
-        $meipai_url = "http://www.meipai.com/media/{$matches['video_id']}";
-        $request = new WP_Http();
-        $data = $request->request($meipai_url, array('timeout' => 1));
-        $data = $data['body'];
-        if (!empty($data)) {
-            preg_match('/<meta content="(.*)" property="og:video:url">/', $data, $match);
-        }
-        $embed = $this->get_iframe("{$match[1]}", $url);
+        $embed = $this->get_link($url);
         return apply_filters( 'embed_meipai', $embed, $matches, $attr, $url, $rawattr );
     }
     
@@ -485,7 +478,7 @@ class smartideo{
                         <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
                     </td>
                 </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('b97d7058235b190f7594ad96374759b8', 'd885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f'))){
+        if(in_array(strtolower(md5($option['smartideo_code'])), array('d885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f', '97d762db98812f54996ae10bb0c00190', '1ba0c5c51cd381690eda3f96ba6fd2e1'))){
             echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
