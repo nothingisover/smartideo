@@ -28,7 +28,6 @@ class smartideo{
     private $edit = false;
     private $width = '100%';
     private $height = '500px';
-    private $strategy = 0;
     private $youku_client_id = 'd0b1b77a17cded3b';
     private $option = array();
     public function __construct(){
@@ -45,15 +44,11 @@ class smartideo{
         }
         $this->option = $option;
         extract($option);
-        if(!empty($strategy)){
-            $this->strategy = $strategy;
-        }
         if(!empty($youku_client_id) && strlen($youku_client_id) == 16){
             $this->youku_client_id = $youku_client_id;
         }
-        if($this->strategy != 1){
-            add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
-        }
+
+        add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
 
         wp_embed_unregister_handler('youku');
         wp_embed_unregister_handler('tudou');
@@ -303,10 +298,6 @@ class smartideo{
 
     private function get_embed($url = '', $source = '', $width = '', $height = ''){
         $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
         $html .=
             '<div class="smartideo">
                 <div class="player"' . $this->get_size_style($width, $height) . '>
@@ -327,10 +318,6 @@ class smartideo{
 
     private function get_iframe($url = '', $source = '', $width = '', $height = ''){
         $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
         $html .=
             '<div class="smartideo">
                 <div class="player"' . $this->get_size_style($width, $height) . '>
@@ -351,10 +338,6 @@ class smartideo{
     
     private function get_link($url){
         $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
         $html .=  
             '<div class="smartideo">
                 <div class="player"' . $this->get_size_style(0, 0) . '>

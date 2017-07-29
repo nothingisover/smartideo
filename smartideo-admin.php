@@ -2,7 +2,7 @@
 class smartideo_admin{
     public function __construct(){
         if($_POST['smartideo_submit'] == '保存'){
-            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'strategy', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
+            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
             $option = json_decode(get_option('smartideo_option'), true);
             foreach($_POST as $key => $val){
                 if(in_array($key, $param)){
@@ -24,21 +24,6 @@ class smartideo_admin{
         echo '<h2>Smartideo 设置</h2>';
         echo '<form action="" method="post">
             <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">资源加载策略</th>
-                    <td>
-                        <label title="按需加载">
-                            <input type="radio" name="strategy" value="1" ' . ($option['strategy'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>按需加载</span>
-                        </label>
-                        <label title="全局加载">
-                            <input type="radio" name="strategy" value="0" ' . ($option['strategy'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>全局加载</span>
-                        </label>
-                        <br />
-                        <p class="description">默认全局加载（推荐）</p>
-                    </td>
-                </tr>
                 <tr valign="top">
                     <th scope="row">播放器尺寸</th>
                     <td>
