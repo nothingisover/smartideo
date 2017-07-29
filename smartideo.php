@@ -4,21 +4,21 @@
 
 Plugin Name: Smartideo
 
-Plugin URI: http://www.fengziliu.com/
+Plugin URI: http://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.3.0
+Version: 2.4.0
 
 Author: Fens Liu
 
-Author URI: http://www.fengziliu.com/smartideo-2.html
+Author URI: http://www.rifuyiri.net/t/3639
 
 */
 
 
 
-define('SMARTIDEO_VERSION', '2.3.0');
+define('SMARTIDEO_VERSION', '2.4.0');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -28,7 +28,6 @@ class smartideo{
     private $edit = false;
     private $width = '100%';
     private $height = '500px';
-    private $strategy = 0;
     private $youku_client_id = 'd0b1b77a17cded3b';
     private $option = array();
     public function __construct(){
@@ -45,15 +44,11 @@ class smartideo{
         }
         $this->option = $option;
         extract($option);
-        if(!empty($strategy)){
-            $this->strategy = $strategy;
-        }
-        if(!empty($youku_client_id)){
+        if(!empty($youku_client_id) && strlen($youku_client_id) == 16){
             $this->youku_client_id = $youku_client_id;
         }
-        if($this->strategy != 1){
-            add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
-        }
+
+        add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
 
         wp_embed_unregister_handler('youku');
         wp_embed_unregister_handler('tudou');
@@ -86,7 +81,7 @@ class smartideo{
             array($this, 'smartideo_embed_handler_wasu') );
 
         wp_embed_register_handler( 'smartideo_youtube',
-            '#https?://www\.youtube\.com/watch\?v=(?<video_id>\w+)#i',
+            '#https?://www\.youtube\.com/watch\?v=(?<video_id>[a-zA-Z0-9_=\-]+)#i',
             array($this, 'smartideo_embed_handler_youtube') );
 
         wp_embed_register_handler( 'smartideo_acfun',
@@ -111,7 +106,7 @@ class smartideo{
         
         // Not supported HTML5
         wp_embed_register_handler( 'smartideo_yinyuetai',
-            '#https?://v\.yinyuetai\.com/video/(?<video_id>\d+)#i',
+            '#https?://(?:[www|v]+)\.yinyuetai\.com/video/(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_yinyuetai') );
 
         wp_embed_register_handler( 'smartideo_ku6',
@@ -302,36 +297,19 @@ class smartideo{
     }
 
     private function get_embed($url = '', $source = '', $width = '', $height = ''){
-        $style = $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
-        if($this->edit){
-            $width = $this->width;
-            $height = $this->height;
-        }
-        if(!empty($width)){
-            $style .= "width: {$width};";
-        }
-        if(!empty($height)){
-            $style .= "height: {$height};";
-        }
-        if(!empty($style)){
-            $style = ' style="' . $style . '"';
-        }
+        $html = '';
         $html .=
             '<div class="smartideo">
-                <div class="player"' . $style . '>
+                <div class="player"' . $this->get_size_style($width, $height) . '>
                     <embed src="' . $url . '" allowFullScreen="true" quality="high" width="100%" height="100%" allowScriptAccess="always" type="application/x-shockwave-flash" wmode="transparent"></embed>
                 </div>';
         if($this->option['tips_status'] == 1 && !$this->edit){
-            if(!empty($source)){
+            if(empty($source)){
                 $source = 'javascript:void(0);';
             }
             $html .=
                 '<div class="tips">
-                    <a href="' . $source . '" target="_blank" smartideo-title="' . $this->option['tips_content'] . '" smartideo-title-mobile="' . $this->option['tips_content_mobile'] . '" title="' . $this->option['tips_content'] . '" id="smartideo_tips" rel="nofollow"></a>
+                    <a href="' . $source . '" target="_blank" smartideo-title="' . $this->option['tips_content'] . '" smartideo-title-mobile="' . $this->option['tips_content_mobile'] . '" title="' . $this->option['tips_content'] . '" class="smartideo-tips" rel="nofollow"></a>
                 </div>';
         }
         $html .= '</div>';
@@ -339,36 +317,19 @@ class smartideo{
     }
 
     private function get_iframe($url = '', $source = '', $width = '', $height = ''){
-        $style = $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
-        if($this->edit){
-            $width = $this->width;
-            $height = $this->height;
-        }
-        if(!empty($width)){
-            $style .= "width: {$width};";
-        }
-        if(!empty($height)){
-            $style .= "height: {$height};";
-        }
-        if(!empty($style)){
-            $style = ' style="' . $style . '"';
-        }
+        $html = '';
         $html .=
             '<div class="smartideo">
-                <div class="player"' . $style . '>
+                <div class="player"' . $this->get_size_style($width, $height) . '>
                     <iframe src="' . $url . '" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
                 </div>';
         if(isset($this->option['tips_status']) && $this->option['tips_status'] == 1 && !$this->edit){
-            if(!empty($source)){
+            if(empty($source)){
                 $source = 'javascript:void(0);';
             }
             $html .=
                 '<div class="tips">
-                    <a href="' . $source . '" target="_blank" smartideo-title="' . $this->option['tips_content'] . '" smartideo-title-mobile="' . $this->option['tips_content_mobile'] . '" title="' . $this->option['tips_content'] . '" id="smartideo_tips" rel="nofollow"></a>
+                    <a href="' . $source . '" target="_blank" smartideo-title="' . $this->option['tips_content'] . '" smartideo-title-mobile="' . $this->option['tips_content_mobile'] . '" title="' . $this->option['tips_content'] . '" class="smartideo-tips" rel="nofollow"></a>
                 </div>';
         }
         $html .= '</div>';
@@ -376,27 +337,10 @@ class smartideo{
     }
     
     private function get_link($url){
-        $style = $html = '';
-        if($this->strategy == 1){
-            $html .= sprintf('<link rel="stylesheet" href="%1$s" type="text/css" media="screen">', SMARTIDEO_URL . '/static/smartideo.css?ver=' . SMARTIDEO_VERSION);
-            $html .= sprintf('<script type="text/javascript" src="%1$s"></script>', SMARTIDEO_URL . '/static/smartideo.js?ver=' . SMARTIDEO_VERSION);
-        }
-        if($this->edit){
-            $width = $this->width;
-            $height = $this->height;
-        }
-        if(!empty($width)){
-            $style .= "width: {$width};";
-        }
-        if(!empty($height)){
-            $style .= "height: {$height};";
-        }
-        if(!empty($style)){
-            $style = ' style="' . $style . '"';
-        }
+        $html = '';
         $html .=  
             '<div class="smartideo">
-                <div class="player"' . $style . '>
+                <div class="player"' . $this->get_size_style(0, 0) . '>
                     <a href="' . $url . '" target="_blank" class="smartideo-play-link"><div class="smartideo-play-button"></div></a>
                 </div>
             </div>';
@@ -413,117 +357,8 @@ class smartideo{
     }
 
     public function admin_settings(){
-        if($_POST['smartideo_submit'] == '保存'){
-            $param = array('smartideo_code', 'width', 'height', 'strategy', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
-            $option = json_decode(get_option('smartideo_option'), true);
-            foreach($_POST as $key => $val){
-                if(in_array($key, $param)){
-                    $option[$key] = sanitize_text_field($val);
-                }
-            }
-            $json = json_encode($option);
-            update_option('smartideo_option', $json);
-        }
-        $option = get_option('smartideo_option');
-        if(!empty($option)){
-            $option = json_decode($option, true);
-        }
-
-        echo '<h2>Smartideo 设置</h2>';
-        echo '<form action="" method="post">
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">资源加载策略</th>
-                    <td>
-                        <label title="按需加载">
-                            <input type="radio" name="strategy" value="1" ' . ($option['strategy'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>按需加载</span>
-                        </label>
-                        <label title="全局加载">
-                            <input type="radio" name="strategy" value="0" ' . ($option['strategy'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>全局加载</span>
-                        </label>
-                        <br />
-                        <p class="description">默认全局加载（推荐）</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">贴士</th>
-                    <td>
-                        <label title="开启">
-                            <input type="radio" name="tips_status" value="1" ' . ($option['tips_status'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>开启</span>
-                        </label>
-                        <label title="关闭">
-                            <input type="radio" name="tips_status" value="0" ' . ($option['tips_status'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>关闭</span>
-                        </label>
-                        <br />
-                        <p class="description">默认关闭</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">贴士内容</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="tips_content" value="'.$option['tips_content'].'" /></label>
-                        <br />
-                        <p class="description">如：如果视频无法播放，点击这里试试</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">贴士内容（移动设备）</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="tips_content_mobile" value="'.$option['tips_content_mobile'].'" /></label>
-                        <br />
-                        <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
-                    </td>
-                </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('d885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f', '97d762db98812f54996ae10bb0c00190', '1ba0c5c51cd381690eda3f96ba6fd2e1'))){
-            echo '<tr valign="top">
-                    <th scope="row">优酷client_id</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="youku_client_id" value="'.$option['youku_client_id'].'"></label>
-                        <br />
-                        <p class="description">供优酷开发者使用，没有client_id请留空</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">哔哩哔哩播放器</th>
-                    <td>
-                        <label title="Flash版">
-                            <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>自动选择，PC使用Flash播放器，手机使用H5播放器</span>
-                        </label>
-                        <label title="H5版">
-                            <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>全平台使用H5播放器（beta）</span>
-                        </label>
-                        <br />
-                        <p class="description">默认使用自动模式</p>
-                    </td>
-                </tr>';
-        }else{
-            echo '<tr valign="top">
-                <th scope="row">高级功能激活码</th>
-                <td>
-                    <label><input type="text" class="regular-text code" name="smartideo_code" value="'.$option['smartideo_code'].'"></label>
-                    <br />
-                    <p class="description">
-                        使用方法：<br />
-                        1.升级到最新版本（<a href="http://www.fengziliu.com/smartideo-2.html#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
-                        2.激活码关注微信公众号“<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
-                        注意：如果激活码失效，请按照上述方法重新获取。</p>
-                </td>
-            </tr>';
-        }
-        echo '</table>
-            <p class="submit"><input type="submit" name="smartideo_submit" id="submit" class="button-primary" value="保存"></p>
-            </form>';
-        echo '<h2>意见反馈</h2>
-            <p>你的意见是Smartido成长的动力，欢迎给我们留言，或许你想要的功能下一个版本就会实现哦！</p>
-            <p>插件官方页面：<a href="http://www.fengziliu.com/smartideo-2.html" target="_blank">http://www.fengziliu.com/smartideo-2.html</a></p>
-            <p>微信公众号：<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a></p>
-        ';
+        require_once 'smartideo-admin.php';
+        new smartideo_admin();
     }
 
     private function is_https(){
@@ -532,5 +367,33 @@ class smartideo{
         }else{
             return false;
         }
+    }
+    private function get_size_style($width, $height){
+        if(empty($width) || empty($height)){
+            $width = $height = 0;
+            if($this->edit){
+                $width = $this->width;
+                $height = $this->height;
+            }else if($this->option['response'] == 0){
+                if(wp_is_mobile()){
+                    $width = $this->option['width_mobile'];
+                    $height = $this->option['height_mobile'];
+                }else{
+                    $width = $this->option['width'];
+                    $height = $this->option['height'];
+                }
+            }
+        }
+        $style = '';
+        if(!empty($width)){
+            $style .= "width: {$width};";
+        }
+        if(!empty($height)){
+            $style .= "height: {$height};";
+        }
+        if(!empty($style)){
+            $style = ' style="' . $style . '"';
+        }
+        return $style;
     }
 }

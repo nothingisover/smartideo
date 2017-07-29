@@ -13,10 +13,10 @@ Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持�
 直接粘贴视频播放页完整的URL到编辑器（单独一行），就可以加载视频播放器。
 
 = 详细介绍 =
-http://www.fengziliu.com/smartideo-2.html
+http://www.rifuyiri.net/t/3639
 
 = 效果展示 =
-http://www.rifuyiri.net/tag/%e7%be%8e%e5%a5%b3/ （视频）
+http://www.rifuyiri.net/category/video （视频）
 http://www.rifuyiri.net/music/m-1/ （音乐）
 PS: 手机访问可以查看在移动设备上的效果
 
@@ -31,7 +31,16 @@ PS: 手机访问可以查看在移动设备上的效果
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
 = 小广告：开发者必备的Chrome插件 =
 
-http://t.cn/RJe4SNI
+http://www.rifuyiri.net/t/3638
+
+
+= 2.4.0 =
+* 新增 播放器尺寸设置
+* 优化 对YouTube URL的支持
+* 优化 对音悦台URL的支持
+* 修复 Tips链接无效的问题
+* 修复 Tips多个播放器冲突的问题
+* 取消 资源加载策略设置
 
 = 2.3.0 =
 
