@@ -4,21 +4,21 @@
 
 Plugin Name: Smartideo
 
-Plugin URI: http://www.rifuyiri.net/t/3639
+Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.4.0
+Version: 2.4.1
 
 Author: Fens Liu
 
-Author URI: http://www.rifuyiri.net/t/3639
+Author URI: https://www.rifuyiri.net/t/3639
 
 */
 
 
 
-define('SMARTIDEO_VERSION', '2.4.0');
+define('SMARTIDEO_VERSION', '2.4.1');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -184,7 +184,7 @@ class smartideo{
                 preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
                 $cid = (int)$match[1];
                 if ($cid > 0) {
-                    $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}", $url);
+                    $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
                 }
             }catch(Exception $e){}
         }
