@@ -184,12 +184,12 @@ class smartideo{
                 preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
                 $cid = (int)$match[1];
                 if ($cid > 0) {
-                    $embed = $this->get_iframe("//www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
+                    $embed = $this->get_iframe(($this->is_https() ? 'https' : 'http') . "://www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
                 }
             }catch(Exception $e){}
         }
         if(empty($embed)){
-            $embed = $this->get_embed("//static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page={$page}", $url);
+            $embed = $this->get_embed("//static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
         }
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
