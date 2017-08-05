@@ -116,7 +116,7 @@ class smartideo_admin{
                     <br />
                     <p class="description">
                         使用方法：<br />
-                        1.升级到最新版本（<a href="http://www.rifuyiri.net/t/3639#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
+                        1.升级到最新版本（<a href="https://www.rifuyiri.net/t/3639#changelog" target="_blank">' . SMARTIDEO_VERSION . '</a>），填入激活码保存后可开启高级功能。<br />
                         2.激活码关注微信公众号“<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a>”回复“Smartideo Code”即可获得～<br />
                         注意：如果激活码失效，请按照上述方法重新获取。</p>
                 </td>
@@ -127,7 +127,7 @@ class smartideo_admin{
             </form>';
         echo '<h2>意见反馈</h2>
             <p>你的意见是Smartido成长的动力，欢迎给我们留言，或许你想要的功能下一个版本就会实现哦！</p>
-            <p>插件官方页面：<a href="http://www.rifuyiri.net/t/3639" target="_blank">http://www.rifuyiri.net/t/3639</a></p>
+            <p>插件官方页面：<a href="https://www.rifuyiri.net/t/3639" target="_blank">https://www.rifuyiri.net/t/3639</a></p>
             <p>微信公众号：<a href="/wp-content/plugins/smartideo/static/qrcode.jpg" target="_blank">ri-fu-yi-ri</a></p>
         ';
     }
