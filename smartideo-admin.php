@@ -56,35 +56,37 @@ class smartideo_admin{
                 <tr valign="top">
                     <th scope="row">贴士</th>
                     <td>
-                        <label title="开启">
-                            <input type="radio" name="tips_status" value="1" ' . ($option['tips_status'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>开启</span>
-                        </label>
-                        <label title="关闭">
-                            <input type="radio" name="tips_status" value="0" ' . ($option['tips_status'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>关闭</span>
-                        </label>
-                        <br />
-                        <p class="description">默认关闭</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">贴士内容</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="tips_content" value="'.$option['tips_content'].'" /></label>
-                        <br />
-                        <p class="description">如：如果视频无法播放，点击这里试试</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">贴士内容（移动设备）</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="tips_content_mobile" value="'.$option['tips_content_mobile'].'" /></label>
-                        <br />
-                        <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
+                        <fieldset>
+                            <p>
+                                <label title="开启">
+                                    <input type="radio" name="tips_status" value="1" ' . ($option['tips_status'] == 1 ? 'checked="checked"' : '') . '/>
+                                    <span>开启</span>
+                                </label>
+                            </p>
+                            <p>
+                                <label title="关闭">
+                                    <input type="radio" name="tips_status" value="0" ' . ($option['tips_status'] != 1 ? 'checked="checked"' : '') . '/>
+                                    <span>关闭（默认）</span>
+                                </label>
+                            </p>
+                            <ul>
+                                <li>
+                                    电脑端：
+                                    <label><input type="text" class="regular-text code" name="tips_content" value="'.$option['tips_content'].'" /></label>
+                                    <br />
+                                    <p class="description">如：如果视频无法播放，点击这里试试</p>
+                                </li>
+                                <li>
+                                    移动端：
+                                    <label><input type="text" class="regular-text code" name="tips_content_mobile" value="'.$option['tips_content_mobile'].'" /></label>
+                                    <br />
+                                    <p class="description">如：建议在WIFI环境下播放，土豪请随意~</p>
+                                </li>
+                            </ul>
+                        </fieldset>
                     </td>
                 </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('d885229d8e68e15cd0e2e5658902bfbf', 'c4f1f5e51b0d89c2f5f20e12282d667f', '97d762db98812f54996ae10bb0c00190', '1ba0c5c51cd381690eda3f96ba6fd2e1'))){
+        if(in_array(strtolower(md5($option['smartideo_code'])), array('c4f1f5e51b0d89c2f5f20e12282d667f', '97d762db98812f54996ae10bb0c00190', '1ba0c5c51cd381690eda3f96ba6fd2e1', '76c2c3119a47313b0e39e53e101d4ffc'))){
             echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
@@ -96,16 +98,20 @@ class smartideo_admin{
                 <tr valign="top">
                     <th scope="row">哔哩哔哩播放器</th>
                     <td>
-                        <label title="Flash版">
-                            <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
-                            <span>自动选择，PC使用Flash播放器，手机使用H5播放器</span>
-                        </label>
-                        <label title="H5版">
-                            <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
-                            <span>全平台使用H5播放器（beta）</span>
-                        </label>
-                        <br />
-                        <p class="description">默认使用自动模式</p>
+                        <fieldset>
+                            <p>
+                                <label title="Flash版">
+                                    <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
+                                    <span>自动选择，PC使用Flash播放器，手机使用H5播放器（默认）</span>
+                                </label>
+                            </p>
+                            <p>
+                                <label title="H5版">
+                                    <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
+                                    <span>全平台使用H5播放器（beta）</span>
+                                </label>
+                            </p>
+                        </fieldset>
                     </td>
                 </tr>';
         }else{

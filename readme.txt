@@ -26,12 +26,20 @@ PS: 手机访问可以查看在移动设备上的效果
 2. 或者上传文件夹 `smartideo` 至 `/wp-content/plugins/` 目录
 3. 在插件管理页面中激活 Smartideo
 
+== 已知问题 ==
+* 哔哩哔哩在Android手机上无法播放（抓包发现是哔哩哔哩拒绝了一下资源请求，这个需要哔哩哔哩官方修复）
+
 == Changelog ==
 
 = 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
 = 小广告：开发者必备的Chrome插件 =
 
 https://www.rifuyiri.net/t/3638
+
+= 2.4.3 = 
+* 优化 Smartideo设置
+* 修复 与Editor.md的Emoji表情渲染冲突的问题
+* 修复 哔哩哔哩分P失效的问题（哔哩哔哩改了分P的参数）
 
 = 2.4.2 =
 * 优化 哔哩哔哩H5播放器

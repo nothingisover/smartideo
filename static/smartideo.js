@@ -1,4 +1,4 @@
-window.onload = function(){
+(function() {
     var smartideoTips = document.getElementsByClassName('smartideo-tips');
     if(smartideoTips.length > 0){
         var mobile = navigator.userAgent.toLowerCase().match(/(ipad|ipod|iphone|android|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|win ce)/i) != null;
@@ -17,4 +17,4 @@ window.onload = function(){
             }
         }
     }
-}
+})();

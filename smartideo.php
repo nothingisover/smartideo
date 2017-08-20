@@ -8,7 +8,7 @@ Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.4.2
+Version: 2.4.3
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: https://www.rifuyiri.net/t/3639
 
 
 
-define('SMARTIDEO_VERSION', '2.4.2');
+define('SMARTIDEO_VERSION', '2.4.3');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -93,7 +93,7 @@ class smartideo{
             array($this, 'smartideo_embed_handler_meipai') );
         
         wp_embed_register_handler( 'smartideo_bilibili',
-            '#https?://www\.bilibili\.com/video/av(?:(?<video_id1>\d+)/index_(?<video_id2>\d+)|(?<video_id>\d+))#i',
+            '#https?://www\.bilibili\.com/video/av(?:(?<video_id1>\d+)/(?:index_|\#page=)(?<video_id2>\d+)|(?<video_id>\d+))#i',
             array($this, 'smartideo_embed_handler_bilibili') );
 
         wp_embed_register_handler( 'smartideo_miaopai',
@@ -150,7 +150,7 @@ class smartideo{
 
     public function smartideo_embed_handler_qq( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
-        $embed = $this->get_iframe("//v.qq.com/iframe/player.html?vid={$matches['video_id']}&tiny=1&auto=0", $url);
+        $embed = $this->get_iframe("//v.qq.com/iframe/player.html?vid={$matches['video_id']}&auto=0", $url);
         return apply_filters( 'embed_qq', $embed, $matches, $attr, $url, $rawattr );
     }
 
