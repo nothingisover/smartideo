@@ -8,7 +8,7 @@ Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.4.3
+Version: 2.4.4
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: https://www.rifuyiri.net/t/3639
 
 
 
-define('SMARTIDEO_VERSION', '2.4.3');
+define('SMARTIDEO_VERSION', '2.4.4');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -56,14 +56,6 @@ class smartideo{
         wp_embed_unregister_handler('youtube');
 
         // video
-        wp_embed_register_handler( 'smartideo_tudou',
-            '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)#i',
-            array($this, 'smartideo_embed_handler_tudou') );
-
-        wp_embed_register_handler( 'smartideo_56',
-            '#https?://(?:www\.)?56\.com/[a-z0-9]+/(?:play_album\-aid\-[0-9]+_vid\-(?<video_id1>[a-z0-9_=\-]+)|v_(?<video_id2>[a-z0-9_=\-]+))#i',
-            array($this, 'smartideo_embed_handler_56') );
-
         wp_embed_register_handler( 'smartideo_youku',
             '#https?://v\.youku\.com/v_show/id_(?<video_id>[a-z0-9_=\-]+)#i',
             array($this, 'smartideo_embed_handler_youku') );
@@ -87,10 +79,6 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_acfun',
             '#https?://www\.acfun\.(?:[tv|cn]+)/v/ac(?<video_id>\d+)#i',
             array($this, 'smartideo_embed_handler_acfun') );
-
-        wp_embed_register_handler( 'smartideo_meipai',
-            '#https?://(?:www\.)?meipai\.com/media/(?<video_id>\d+)#i',
-            array($this, 'smartideo_embed_handler_meipai') );
         
         wp_embed_register_handler( 'smartideo_bilibili',
             '#https?://www\.bilibili\.com/video/av(?:(?<video_id1>\d+)/(?:index_|\#page=)(?<video_id2>\d+)|(?<video_id>\d+))#i',
@@ -103,6 +91,10 @@ class smartideo{
         wp_embed_register_handler( 'smartideo_iqiyi',
             '#https?://www\.iqiyi\.com/v_(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_iqiyi') );
+        
+        wp_embed_register_handler( 'smartideo_56',
+            '#https?://(?:www\.)?56\.com/[a-z0-9]+/(?:play_album\-aid\-[0-9]+_vid\-(?<video_id1>[a-z0-9_=\-]+)|v_(?<video_id2>[a-z0-9_=\-]+))#i',
+            array($this, 'smartideo_embed_handler_56') );
         
         // Not supported HTML5
         wp_embed_register_handler( 'smartideo_yinyuetai',
@@ -121,6 +113,14 @@ class smartideo{
             '#https?://www\.(?:[hunantv|mgtv]+)\.com/(?:[a-z0-9/]+)/(?<video_id>\d+)\.html#i',
             array($this, 'smartideo_embed_handler_hunantv') );
 
+        wp_embed_register_handler( 'smartideo_meipai',
+            '#https?://(?:www\.)?meipai\.com/media/(?<video_id>\d+)#i',
+            array($this, 'smartideo_embed_handler_meipai') );
+        
+        wp_embed_register_handler( 'smartideo_tudou',
+            '#https?://(?:www\.)?tudou\.com/(?:programs/view|listplay/(?<list_id>[a-z0-9_=\-]+))/(?<video_id>[a-z0-9_=\-]+)#i',
+            array($this, 'smartideo_embed_handler_tudou') );
+        
         // music
         wp_embed_register_handler( 'smartideo_music163',
             '#https?://music\.163\.com/\#/song\?id=(?<video_id>\d+)#i',
@@ -137,12 +137,6 @@ class smartideo{
     }
 
     # video
-    public function smartideo_embed_handler_56( $matches, $attr, $url, $rawattr ) {
-	$matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
-        $embed = $this->get_iframe("http://www.56.com/iframe/{$matches['video_id']}", $url);
-        return apply_filters( 'embed_56', $embed, $matches, $attr, $url, $rawattr );
-    }
-
     public function smartideo_embed_handler_youku( $matches, $attr, $url, $rawattr ) {
         $embed = $this->get_iframe("//player.youku.com/embed/{$matches['video_id']}?client_id={$this->youku_client_id}", $url);
         return apply_filters( 'embed_youku', $embed, $matches, $attr, $url, $rawattr );
@@ -184,7 +178,7 @@ class smartideo{
                 preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
                 $cid = (int)$match[1];
                 if ($cid > 0) {
-                    $embed = $this->get_iframe(($this->is_https() ? 'https' : 'http') . "://www.bilibili.com/html/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
+                    $embed = $this->get_iframe(($this->is_https() ? 'https' : 'http') . "://www.bilibili.com/blackboard/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
                 }
             }catch(Exception $e){}
         }
@@ -231,6 +225,12 @@ class smartideo{
         return apply_filters( 'embed_iqiyi', $embed, $matches, $attr, $url, $rawattr );
     }
 
+    public function smartideo_embed_handler_56( $matches, $attr, $url, $rawattr ) {
+	$matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
+        $embed = $this->get_iframe("http://www.56.com/iframe/{$matches['video_id']}", $url);
+        return apply_filters( 'embed_56', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
     # video widthout h5
     public function smartideo_embed_handler_yinyuetai( $matches, $attr, $url, $rawattr ){
         $embed = $this->get_embed("http://player.yinyuetai.com/video/player/{$matches['video_id']}/v_0.swf", $url);
