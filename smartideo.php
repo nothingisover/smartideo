@@ -8,7 +8,7 @@ Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.4.4
+Version: 2.5.0
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: https://www.rifuyiri.net/t/3639
 
 
 
-define('SMARTIDEO_VERSION', '2.4.4');
+define('SMARTIDEO_VERSION', '2.5.0');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -88,8 +88,12 @@ class smartideo{
             '#https?://www\.miaopai\.com/show/(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_miaopai') );
         
+        wp_embed_register_handler( 'smartideo_weibo',
+            '#https?://weibo\.com/tv/v/(?:[a-z0-9_\./]+\?fid=1034:(?<video_id>[a-z0-9_=\-]+))#i',
+            array($this, 'smartideo_embed_handler_weibo') );
+        
         wp_embed_register_handler( 'smartideo_iqiyi',
-            '#https?://www\.iqiyi\.com/v_(?<video_id>[a-z0-9_~\-]+)#i',
+            '#https?://www\.iqiyi\.com/(?:[a-zA-Z]+)_(?<video_id>[a-z0-9_~\-]+)#i',
             array($this, 'smartideo_embed_handler_iqiyi') );
         
         wp_embed_register_handler( 'smartideo_56',
@@ -166,25 +170,7 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        if(wp_is_mobile() || $this->option['bilibili_player']){
-            $embed = '';
-            try{
-                $api = ($this->is_https() ? 'https' : 'http') . '://www.bilibili.com/video/av' . $matches['video_id'] . ($page > 1 ? "/index_{$page}.html" : '');
-                $request = new WP_Http();
-                $data = (array)$request->request($api, array('timeout' => 3));
-                if(!isset($data['body'])){
-                    $data['data'] = '';
-                }
-                preg_match('/cid=(\d+)&aid=/i', (string)$data['body'], $match);
-                $cid = (int)$match[1];
-                if ($cid > 0) {
-                    $embed = $this->get_iframe(($this->is_https() ? 'https' : 'http') . "://www.bilibili.com/blackboard/html5player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}&as_wide=1", $url);
-                }
-            }catch(Exception $e){}
-        }
-        if(empty($embed)){
-            $embed = $this->get_embed("//static.hdslb.com/miniloader.swf?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
-        }
+        $embed = $this->get_iframe("//www.bilibili.com/html/player.html?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -205,9 +191,8 @@ class smartideo{
     public function smartideo_embed_handler_iqiyi( $matches, $attr, $url, $rawattr ) {
         $embed = '';
         try{
-            $api = 'http://www.iqiyi.com/v_' . $matches['video_id'] . '.html';
             $request = new WP_Http();
-            $data = (array)$request->request($api, array('timeout' => 3));
+            $data = (array)$request->request($url, array('timeout' => 3));
             if(!isset($data['body'])){
                 $data['data'] = '';
             }
@@ -232,6 +217,14 @@ class smartideo{
     }
     
     # video widthout h5
+    public function smartideo_embed_handler_weibo( $matches, $attr, $url, $rawattr ) {
+        $embed = $this->get_embed("http://video.weibo.com/player/1034:{$matches['video_id']}/v.swf", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_link($url);
+        }
+        return apply_filters( 'embed_weibo', $embed, $matches, $attr, $url, $rawattr );
+    }
+    
     public function smartideo_embed_handler_yinyuetai( $matches, $attr, $url, $rawattr ){
         $embed = $this->get_embed("http://player.yinyuetai.com/video/player/{$matches['video_id']}/v_0.swf", $url);
         if(wp_is_mobile()){

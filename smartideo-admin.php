@@ -94,25 +94,6 @@ class smartideo_admin{
                         <br />
                         <p class="description">供优酷开发者使用，没有client_id请留空</p>
                     </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">哔哩哔哩播放器</th>
-                    <td>
-                        <fieldset>
-                            <p>
-                                <label title="Flash版">
-                                    <input type="radio" name="bilibili_player" value="0" ' . ($option['bilibili_player'] != 1 ? 'checked="checked"' : '') . '/>
-                                    <span>自动选择，PC使用Flash播放器，手机使用H5播放器（默认）</span>
-                                </label>
-                            </p>
-                            <p>
-                                <label title="H5版">
-                                    <input type="radio" name="bilibili_player" value="1" ' . ($option['bilibili_player'] == 1 ? 'checked="checked"' : '') . '/>
-                                    <span>全平台使用H5播放器（beta）</span>
-                                </label>
-                            </p>
-                        </fieldset>
-                    </td>
                 </tr>';
         }else{
             echo '<tr valign="top">
