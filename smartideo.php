@@ -170,7 +170,41 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        $embed = $this->get_iframe("//www.bilibili.com/html/player.html?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
+        // https://www.bilibili.com/widget/getPageList?aid={$matches['video_id']}
+        try{
+            $request = new WP_Http();
+            $api = "https://www.bilibili.com/widget/getPageList?aid={$matches['video_id']}";
+            $data = (array)$request->request($api, array('timeout' => 3));
+            $cid = 0;
+            if(!isset($data['body'])){
+                $data['data'] = '';
+            }else{
+                $apiData = json_decode($data['body'], true);
+                $cid = $apiData[0]['cid'];
+            }
+        }catch(Exception $e){}
+        if($cid){
+            $embed = $this->get_iframe("https://www.bilibili.com/blackboard/html5player.html?cid={$cid}&aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
+        }else{
+            
+        }
+//        $embed .= '<video id="video_show" width="100%" height="100%" preload="auto" controls="controls" webkit-playsinline></video>';
+//        $embed .= '<script type="text/javascript">
+//                function callbackfunction(res) {
+//                    var url=res.durl[0].url.replace(/https?/,"https");
+//                    jQuery("#video_show").html(\'<source src="\'+url+\'" type="video/mp4">\');
+//                    jQuery("#video_show").attr("src", url);
+//                    jQuery("#video_show").attr("poster", res.img);
+//                    jQuery("#video_show").on("click", function(){
+//                        if (jQuery(this)[0].paused) {
+//                            jQuery(this)[0].play();
+//                        }else {
+//                            jQuery(this)[0].pause();
+//                        }
+//                    });
+//                }
+//            </script>';
+//        $embed .= '<script type="text/javascript" src="https://api.bilibili.com/playurl?callback=callbackfunction&aid=4232078&page=&platform=html5&quality=1&vtype=mp4&type=jsonp"></script>';
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
 
