@@ -8,7 +8,7 @@ Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.5.0
+Version: 2.5.2
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: https://www.rifuyiri.net/t/3639
 
 
 
-define('SMARTIDEO_VERSION', '2.5.0');
+define('SMARTIDEO_VERSION', '2.5.2');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -170,41 +170,11 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        // https://www.bilibili.com/widget/getPageList?aid={$matches['video_id']}
-        try{
-            $request = new WP_Http();
-            $api = "https://www.bilibili.com/widget/getPageList?aid={$matches['video_id']}";
-            $data = (array)$request->request($api, array('timeout' => 3));
-            $cid = 0;
-            if(!isset($data['body'])){
-                $data['data'] = '';
-            }else{
-                $apiData = json_decode($data['body'], true);
-                $cid = $apiData[0]['cid'];
-            }
-        }catch(Exception $e){}
-        if($cid){
-            $embed = $this->get_iframe("https://www.bilibili.com/blackboard/html5player.html?cid={$cid}&aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
+        if(wp_is_mobile()){
+            $embed = $this->get_iframe("//www.bilibili.com/html/player.html?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
         }else{
-            
+            $embed = $this->get_link($url);
         }
-//        $embed .= '<video id="video_show" width="100%" height="100%" preload="auto" controls="controls" webkit-playsinline></video>';
-//        $embed .= '<script type="text/javascript">
-//                function callbackfunction(res) {
-//                    var url=res.durl[0].url.replace(/https?/,"https");
-//                    jQuery("#video_show").html(\'<source src="\'+url+\'" type="video/mp4">\');
-//                    jQuery("#video_show").attr("src", url);
-//                    jQuery("#video_show").attr("poster", res.img);
-//                    jQuery("#video_show").on("click", function(){
-//                        if (jQuery(this)[0].paused) {
-//                            jQuery(this)[0].play();
-//                        }else {
-//                            jQuery(this)[0].pause();
-//                        }
-//                    });
-//                }
-//            </script>';
-//        $embed .= '<script type="text/javascript" src="https://api.bilibili.com/playurl?callback=callbackfunction&aid=4232078&page=&platform=html5&quality=1&vtype=mp4&type=jsonp"></script>';
         return apply_filters( 'embed_bilibili', $embed, $matches, $attr, $url, $rawattr );
     }
 
@@ -369,6 +339,7 @@ class smartideo{
             '<div class="smartideo">
                 <div class="player"' . $this->get_size_style(0, 0) . '>
                     <a href="' . $url . '" target="_blank" class="smartideo-play-link"><div class="smartideo-play-button"></div></a>
+                    <p style="color: #999;margin-top: 50px;">暂时无法播放，可回源网站播放</p>
                 </div>
             </div>';
         return $html;
