@@ -57,7 +57,7 @@ class smartideo{
 
         // video
         wp_embed_register_handler( 'smartideo_youku',
-            '#https?://v\.youku\.com/v_show/id_(?<video_id>[a-z0-9_=\-]+)#i',
+            '#https?://(?:[v|vo]+)\.youku\.com/v_show/id_(?<video_id>[a-z0-9_=\-]+)#i',
             array($this, 'smartideo_embed_handler_youku') );
 
         wp_embed_register_handler( 'smartideo_qq',
