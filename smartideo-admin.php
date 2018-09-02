@@ -2,7 +2,7 @@
 class smartideo_admin{
     public function __construct(){
         if($_POST['smartideo_submit'] == '保存'){
-            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player');
+            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player', 'bilibili_pc_player');
             $option = json_decode(get_option('smartideo_option'), true);
             foreach($_POST as $key => $val){
                 if(in_array($key, $param)){
@@ -93,6 +93,25 @@ class smartideo_admin{
                         <label><input type="text" class="regular-text code" name="youku_client_id" value="'.$option['youku_client_id'].'"></label>
                         <br />
                         <p class="description">供优酷开发者使用，没有client_id请留空</p>
+                    </td>
+                </tr>';
+            echo '<tr valign="top">
+                    <th scope="row">哔哩哔哩电脑端播放器</th>
+                    <td>
+                        <fieldset>
+                            <p>
+                                <label title="使用H5播放器">
+                                    <input type="radio" name="bilibili_pc_player" value="1" ' . ($option['bilibili_pc_player'] == 1 ? 'checked="checked"' : '') . '/>
+                                    <span>使用H5播放器（如果你的博客有哔哩哔哩的授权可以使用）</span>
+                                </label>
+                            </p>
+                            <p>
+                                <label title="源站播放">
+                                    <input type="radio" name="bilibili_pc_player" value="0" ' . ($option['bilibili_pc_player'] != 1 ? 'checked="checked"' : '') . '/>
+                                    <span>源站播放（默认，跳转至哔哩哔哩播放）</span>
+                                </label>
+                            </p>
+                        </fieldset>
                     </td>
                 </tr>';
         }else{

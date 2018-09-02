@@ -29,6 +29,7 @@ class smartideo{
     private $width = '100%';
     private $height = '500px';
     private $youku_client_id = 'd0b1b77a17cded3b';
+    private $bilibili_pc_player = 0;
     private $option = array();
     public function __construct(){
         if(is_admin()){
@@ -47,6 +48,7 @@ class smartideo{
         if(!empty($youku_client_id) && strlen($youku_client_id) == 16){
             $this->youku_client_id = $youku_client_id;
         }
+        $this->bilibili_pc_player = isset($bilibili_pc_player) ? $bilibili_pc_player : 0;
 
         add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
 
@@ -170,7 +172,7 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
-        if(wp_is_mobile()){
+        if(wp_is_mobile() || $this->bilibili_pc_player == 1){
             $embed = $this->get_iframe("//www.bilibili.com/html/player.html?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
         }else{
             $embed = $this->get_link($url);
