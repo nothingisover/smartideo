@@ -8,7 +8,7 @@ Plugin URI: https://www.rifuyiri.net/t/3639
 
 Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
 
-Version: 2.5.2
+Version: 2.7.0
 
 Author: Fens Liu
 
@@ -18,7 +18,7 @@ Author URI: https://www.rifuyiri.net/t/3639
 
 
 
-define('SMARTIDEO_VERSION', '2.5.2');
+define('SMARTIDEO_VERSION', '2.7.0');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -172,8 +172,19 @@ class smartideo{
     public function smartideo_embed_handler_bilibili( $matches, $attr, $url, $rawattr ) {
         $matches['video_id'] = ($matches['video_id1'] == '') ? $matches['video_id'] : $matches['video_id1'];
         $page = ($matches['video_id2'] > 1) ? $matches['video_id2'] : 1;
+        $cid = '';
+        /*
+        try{
+            $request = new WP_Http();
+            $url = "https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" . $matches['video_id'];
+            $data = (array)$request->request($url, array('timeout' => 3));
+            $json = json_decode($data['body'], true);
+            $cid = $json['cid'];
+
+        }catch(Exception $e){}
+        */
         if(wp_is_mobile() || $this->bilibili_pc_player == 1){
-            $embed = $this->get_iframe("//www.bilibili.com/html/player.html?aid={$matches['video_id']}&page={$page}&as_wide=1", $url);
+            $embed = $this->get_iframe("//player.bilibili.com/player.html?aid={$matches['video_id']}&cid={$cid}&page={$page}", $url);
         }else{
             $embed = $this->get_link($url);
         }
@@ -202,9 +213,9 @@ class smartideo{
             if(!isset($data['body'])){
                 $data['data'] = '';
             }
-            preg_match('/data-player-videoid="(\w+)"/i', (string)$data['body'], $match);
+            preg_match('/"vid":"(\w+)"/i', (string)$data['body'], $match);
             $vid = $match[1];
-            preg_match('/data-player-tvid="(\d+)"/i', (string)$data['body'], $match);
+            preg_match('/"tvId":(\d+)/i', (string)$data['body'], $match);
             $tvid = $match[1];
             if ($tvid > 0 && !empty($vid)) {
                 $embed = $this->get_iframe("//open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid={$vid}&tvId={$tvid}&height=100%&width=100%&autoplay=0", $url);

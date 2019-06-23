@@ -86,7 +86,7 @@ class smartideo_admin{
                         </fieldset>
                     </td>
                 </tr>';
-        if(in_array(strtolower(md5($option['smartideo_code'])), array('97d762db98812f54996ae10bb0c00190', '1ba0c5c51cd381690eda3f96ba6fd2e1', '76c2c3119a47313b0e39e53e101d4ffc'))){
+        if(in_array(strtolower(md5($option['smartideo_code'])), array('76c2c3119a47313b0e39e53e101d4ffc', '4c08d0f36c978aea800903f2299546d8', '78b198b2866a252163d786df8e817808'))){
             echo '<tr valign="top">
                     <th scope="row">优酷client_id</th>
                     <td>
