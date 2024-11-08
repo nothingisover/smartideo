@@ -1,8 +1,9 @@
 === Plugin Name ===
 Contributors: Fens Liu
-Tags: video, html5, flash, youku, tudou, QQ, 56, 视频, 播放器, 优酷, 土豆, 搜狐, 腾讯
+Tags: video, youtube, youku, QQ, 56, 视频, 播放器, 优酷, 搜狐, 腾讯, bilibili, 抖音
 Requires at least: 3.5.0
-Tested up to: 5.2.2
+Tested up to: 6.6.2
+Stable tag: 2.8.0
 
 Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 
 
@@ -13,12 +14,7 @@ Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持�
 直接粘贴视频播放页完整的URL到编辑器（单独一行），就可以加载视频播放器。
 
 = 详细介绍 =
-https://www.rifuyiri.net/t/3639
-
-= 效果展示 =
-https://www.rifuyiri.net/category/video （视频）
-https//www.rifuyiri.net/music/m-1/ （音乐）
-PS: 手机访问可以查看在移动设备上的效果
+https://7yper.com/3639
 
 == Installation ==
 
@@ -26,15 +22,34 @@ PS: 手机访问可以查看在移动设备上的效果
 2. 或者上传文件夹 `smartideo` 至 `/wp-content/plugins/` 目录
 3. 在插件管理页面中激活 Smartideo
 
-== 已知问题 ==
-* 哔哩哔哩在Android手机上无法播放（抓包发现是哔哩哔哩拒绝了一下资源请求，这个需要哔哩哔哩官方修复）
-
 == Changelog ==
 
-= 请关注微信公众号：ri-fu-yi-ri 获取高级功能 =
-= 小广告：开发者必备的Chrome插件 =
+= 请关注微信公众号：Typer 与我联系 =
 
-https://www.rifuyiri.net/t/3638
+= 2.8.0 = 
+* 支持 WordPress 6.6.2
+* 新增 抖音视频
+* 优化 QQ音乐
+* 移除 部份不再支持的平台
+
+= 2.7.4 =
+* 支持 WordPress 6.4.1
+
+= 2.7.3 =
+* 支持 WordPress 6.1.1
+* 支持 AcFun H5播放
+
+= 2.7.2 =
+* 提高 兼容性
+* 支持 WordPress 6.0
+* 优化 哔哩哔哩
+* 移除 音悦台
+* 移除 酷6网
+
+= 2.7.1 =
+* 提高 兼容性
+* 支持 WordPress 5.9.3
+* 移除 虾米音乐
 
 = 2.7.0 =
 * 优化 哔哩哔哩播放器

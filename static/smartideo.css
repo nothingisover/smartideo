@@ -1,6 +1,6 @@
 .smartideo { z-index: 0; text-align: center; background: #CCC; line-height: 0; text-indent: 0; }
 .smartideo embed, .smartideo iframe { padding: 0; margin: 0; }
-.smartideo .player { width: 100%; height: 500px; overflow: hidden; position: relative; }
+.smartideo .player { width: 100%; height: 500px; margin: auto; overflow: hidden; position: relative; }
 .smartideo .player a.smartideo-play-link { display: block; width: 50px; height: 50px; text-decoration: none; border: 0; position: absolute; left: 50%; top: 50%; margin: -25px; }
 .smartideo .player a.smartideo-play-link p { display: none; }
 .smartideo .player .smartideo-play-button { width: 0; height: 0; border-top: 25px solid transparent; border-left: 50px solid #FFF; border-bottom: 25px solid transparent; }
