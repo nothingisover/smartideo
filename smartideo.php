@@ -1,26 +1,15 @@
 <?php
-
 /*
-
 Plugin Name: Smartideo
-
 Plugin URI: https://7yper.com/3639
-
-Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、腾讯视频、爱奇艺、哔哩哔哩，酷6、华数、乐视、YouTube 等网站。
-
-Version: 2.8.0
-
-Stable tag: 2.8.0
-
+Description: Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持YouTube、哔哩哔哩、腾讯视频、优酷、搜狐视频、56、华数等网站。
+Version: 2.8.1
+Stable tag: 2.8.1
 Author: Fens Liu
-
 Author URI: https://7yper.com/3639
-
 */
 
-
-
-define('SMARTIDEO_VERSION', '2.8.0');
+define('SMARTIDEO_VERSION', '2.8.1');
 define('SMARTIDEO_URL', plugins_url('', __FILE__));
 define('SMARTIDEO_PATH', dirname( __FILE__ ));
 
@@ -30,7 +19,6 @@ class smartideo{
     private $edit = false;
     private $width = '100%';
     private $height = '500px';
-    private $youku_client_id = 'd0b1b77a17cded3b';
     private $bilibili_pc_player = 0;
     private $option = array();
     public function __construct(){
@@ -45,9 +33,6 @@ class smartideo{
         }
         $this->option = $option;
         extract((array)$option);
-        if(!empty($youku_client_id) && strlen($youku_client_id) == 16){
-            $this->youku_client_id = $youku_client_id;
-        }
         $this->bilibili_pc_player = isset($bilibili_pc_player) ? $bilibili_pc_player : 0;
 
         add_action('wp_enqueue_scripts', array($this, 'smartideo_scripts'));
@@ -71,7 +56,7 @@ class smartideo{
             array($this, 'smartideo_embed_handler_douyin') );
         
         wp_embed_register_handler( 'smartideo_youku',
-            '#https?://(?:[v|vo]+)\.youku\.com/v_show/id_(?<video_id>[a-z0-9_=\-]+)#i',
+            '#https?://v\.youku\.com/(?:v_show/id_(?<video_id1>[a-z0-9_=\-]+)\.html|video\?vid=(?<video_id2>[a-z0-9_=\-]+))#i',
             array($this, 'smartideo_embed_handler_youku') );
 
         wp_embed_register_handler( 'smartideo_qq',
@@ -140,7 +125,8 @@ class smartideo{
         }
     
     public function smartideo_embed_handler_youku( $matches, $attr, $url, $rawattr ) {
-        $embed = $this->get_iframe("//player.youku.com/embed/{$matches['video_id']}?client_id={$this->youku_client_id}", $url);
+        $matches['video_id'] = $matches['video_id1'] == '' ? $matches['video_id2'] : $matches['video_id1'];
+        $embed = $this->get_iframe("//player.youku.com/embed/{$matches['video_id']}", $url);
         return apply_filters( 'embed_youku', $embed, $matches, $attr, $url, $rawattr );
     }
 

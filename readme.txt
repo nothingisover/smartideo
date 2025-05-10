@@ -2,14 +2,14 @@
 Contributors: Fens Liu
 Tags: video, youtube, youku, QQ, 56, 视频, 播放器, 优酷, 搜狐, 腾讯, bilibili, 抖音
 Requires at least: 3.5.0
-Tested up to: 6.6.2
-Stable tag: 2.8.0
+Tested up to: 6.8.1
+Stable tag: 2.8.1
 
 Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 
 
 == Description ==
 
-Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持优酷、搜狐视频、土豆、56、腾讯视频、新浪视频、酷6、华数、乐视、YouTube 等网站。
+Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持YouTube、哔哩哔哩、腾讯视频、优酷、搜狐视频、56、华数等网站。
 
 直接粘贴视频播放页完整的URL到编辑器（单独一行），就可以加载视频播放器。
 
@@ -25,6 +25,11 @@ https://7yper.com/3639
 == Changelog ==
 
 = 请关注微信公众号：Typer 与我联系 =
+
+= 2.8.1 =
+* 支持 WordPress 6.8.1
+* 新增 支持新的优酷播放页地址
+* 移除 优酷client_id相关逻辑
 
 = 2.8.0 = 
 * 支持 WordPress 6.6.2
