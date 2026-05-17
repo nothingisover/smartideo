@@ -1,15 +1,17 @@
-=== Plugin Name ===
+=== Smartideo ===
 Contributors: Fens Liu
-Tags: video, youtube, youku, QQ, 56, 视频, 播放器, 优酷, 搜狐, 腾讯, bilibili, 抖音
+Tags: video, youtube, player, bilibili, douyin
 Requires at least: 3.5.0
-Tested up to: 6.8.1
-Stable tag: 2.8.1
+Tested up to: 6.9.4
+Stable tag: 2.9.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 
 
 == Description ==
 
-Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持YouTube、哔哩哔哩、腾讯视频、优酷、搜狐视频、56、华数等网站。
+Smartideo 是为 WordPress 添加对在线视频支持的一款插件（支持手机、平板等设备HTML5播放）。 目前支持YouTube、哔哩哔哩、抖音、腾讯视频、优酷、搜狐视频、56等网站。
 
 直接粘贴视频播放页完整的URL到编辑器（单独一行），就可以加载视频播放器。
 
@@ -25,6 +27,20 @@ https://7yper.com/3639
 == Changelog ==
 
 = 请关注微信公众号：Typer 与我联系 =
+
+= 2.9.0 =
+* 支持 WordPress 6.9.4
+* 新增 YouTube隐私增强模式（支持youtube-nocookie.com）
+* 新增 全局源站播放设置
+* 新增 哔哩哔哩b23.tv短链支持
+* 新增 iframe懒加载
+* 优化 抖音URL匹配
+* 优化 腾讯视频URL匹配
+* 优化 网易云音乐URL匹配
+* 移除 爱奇艺
+* 移除 华数
+* 移除 Flash播放器
+* 移除 哔哩哔哩电脑端播放器设置
 
 = 2.8.1 =
 * 支持 WordPress 6.8.1

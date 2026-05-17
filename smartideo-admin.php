@@ -10,7 +10,7 @@ class smartideo_admin{
                 echo '<p>保存失败，请重试！</p>';
                 return false;
             }
-            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'tips_status', 'tips_content', 'tips_content_mobile', 'youku_client_id', 'bilibili_player', 'bilibili_pc_player');
+            $param = array('smartideo_code', 'width', 'height', 'width_mobile', 'height_mobile', 'response', 'tips_status', 'tips_content', 'tips_content_mobile', 'youtube_nocookie', 'jump_play');
             $option = get_option('smartideo_option');
             if(!is_array($option)){
                 $option = array();
@@ -50,12 +50,12 @@ class smartideo_admin{
                         <ul>
                             <li>
                                 电脑端：
-                                <label><input type="text" class="small-text" name="width" value="' . esc_html($option['width']) . '" /></label> x 
+                                <label><input type="text" class="small-text" name="width" value="' . esc_html($option['width']) . '" /></label> x
                                 <label><input type="text" class="small-text" name="height" value="' . esc_html($option['height']) . '" /></label>
                             </li>
                             <li>
                                 移动端：
-                                <label><input type="text" class="small-text" name="width_mobile" value="' . esc_html($option['width_mobile']) . '" /></label> x 
+                                <label><input type="text" class="small-text" name="width_mobile" value="' . esc_html($option['width_mobile']) . '" /></label> x
                                 <label><input type="text" class="small-text" name="height_mobile" value="' . esc_html($option['height_mobile']) . '" /></label>
                             </li>
                         </ul>
@@ -96,29 +96,42 @@ class smartideo_admin{
                     </td>
                 </tr>';
             echo '<tr valign="top">
-                    <th scope="row">优酷client_id</th>
-                    <td>
-                        <label><input type="text" class="regular-text code" name="youku_client_id" value="' . (isset($option['youku_client_id']) ? $option['youku_client_id'] : '') . '"></label>
-                        <br />
-                        <p class="description">供优酷开发者使用，没有client_id请留空</p>
-                    </td>
-                </tr>';
-            echo '<tr valign="top">
-                    <th scope="row">哔哩哔哩电脑端播放器</th>
+                    <th scope="row">YouTube 隐私增强模式</th>
                     <td>
                         <fieldset>
                             <p>
-                                <label title="使用H5播放器">
-                                    <input type="radio" name="bilibili_pc_player" value="1" ' . (isset($option['bilibili_pc_player']) && $option['bilibili_pc_player'] == 1 ? 'checked="checked"' : '') . '/>
-                                    <span>使用H5播放器（如果你的博客有哔哩哔哩的授权可以使用）</span>
+                                <label title="开启">
+                                    <input type="radio" name="youtube_nocookie" value="1" ' . (isset($option['youtube_nocookie']) && $option['youtube_nocookie'] == 1 ? 'checked="checked"' : '') . '/>
+                                    <span>开启（使用 youtube-nocookie.com）</span>
                                 </label>
                             </p>
                             <p>
-                                <label title="源站播放">
-                                    <input type="radio" name="bilibili_pc_player" value="0" ' . (isset($option['bilibili_pc_player']) && $option['bilibili_pc_player'] != 1 ? 'checked="checked"' : '') . '/>
-                                    <span>源站播放（默认，跳转至哔哩哔哩播放）</span>
+                                <label title="关闭">
+                                    <input type="radio" name="youtube_nocookie" value="0" ' . (!isset($option['youtube_nocookie']) || $option['youtube_nocookie'] != 1 ? 'checked="checked"' : '') . '/>
+                                    <span>关闭（默认，使用 www.youtube.com）</span>
                                 </label>
                             </p>
+                            <p class="description">开启后，YouTube 嵌入使用 www.youtube-nocookie.com 域名，符合 GDPR 隐私要求</p>
+                        </fieldset>
+                    </td>
+                </tr>';
+                echo '<tr valign="top">
+                    <th scope="row">源站播放</th>
+                    <td>
+                        <fieldset>
+                            <p>
+                                <label title="开启">
+                                    <input type="radio" name="jump_play" value="1" ' . (isset($option['jump_play']) && $option['jump_play'] == 1 ? 'checked="checked"' : '') . '/>
+                                    <span>开启</span>
+                                </label>
+                            </p>
+                            <p>
+                                <label title="关闭">
+                                    <input type="radio" name="jump_play" value="0" ' . (!isset($option['jump_play']) || $option['jump_play'] != 1 ? 'checked="checked"' : '') . '/>
+                                    <span>关闭（默认）</span>
+                                </label>
+                            </p>
+                            <p class="description">启用将跳转到源网站播放</p>
                         </fieldset>
                     </td>
                 </tr>';
